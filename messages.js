@@ -123,11 +123,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const POMO_STOP_MSG = {
     color: "#f00",
     title: "Pomodoro session ended! Here's a summary:",
-    fields: [
-      {name: "Total Cycles", value: `${par1}`, isInline: true},
-      {name: "Work duration", value: `${par2 * par3} min`, isInline: true}
-    ],
-    description: `Total cycles: ${par1} | Total work time: ${par2 * par3} min`,
+    description: `Total cycles: ${par1} | Total work time: ${par2 * par3 / 60000} min`,
   };
 
   var msgBase;
