@@ -7,52 +7,10 @@ const {
   AudioPlayerStatus,
   VoiceConnectionStatus,
 } = require("@discordjs/voice");
-// const { connect } = require("amqplib/lib/connect");
-const AUDIO_TITLES = {
-  breakStart: "breakStart",
-  pomStart: "pomStart",
-  pomEnd: "pomEnd",
-  breakStop: "breakStop",
-  longBreakStart: "longBreakStart"
-}
-
-// audio configurations
-const audioResources = {
-  pomStart: createAudioResource(
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    {
-      inputType: StreamType.Arbitrary,
-    }
-  ),
-  pomEnd: createAudioResource(
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    {
-      inputType: StreamType.Arbitrary,
-    }
-  ),
-  breakStart: createAudioResource(
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    {
-      inputType: StreamType.Arbitrary,
-    }
-  ),
-  longBreakStart: createAudioResource(
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    {
-      inputType: StreamType.Arbitrary,
-    }
-  ),
-  breakEnd: createAudioResource(
-    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    {
-      inputType: StreamType.Arbitrary,
-    }
-  ),
-};
+const {AUDIO} = require("./variables")
 
 class PlayerWrapper {
   constructor() {
-    this.audioResources = audioResources;
     this.player = createAudioPlayer();
   }
 
@@ -76,15 +34,17 @@ class PlayerWrapper {
   }
 
   playSong(name) {
-    let resource = audioResources[name]
-    console.log(resource)
-  
-    if (resource) {
-      this.player.play(resource);
-      return entersState(this.player, AudioPlayerStatus.Playing, 5e3);
-    } else {
-      console.log("audio resource not found")
+    if (AUDIO[name]) {
+      let resource = createAudioResource(AUDIO[name], {
+        inputType: StreamType.Arbitrary
+      })
+      console.log(resource)
+      if (resource) {
+        this.player.play(resource);
+        return entersState(this.player, AudioPlayerStatus.Playing, 5e3);
+      }
     }
+    console.log("audio resource not found")
   }
 }
 

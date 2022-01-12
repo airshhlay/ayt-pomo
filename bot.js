@@ -3,27 +3,15 @@ const { MessageEmbed, Client, Intents } = require("discord.js");
 const { PlayerWrapper } = require("./voice");
 const {
   ERRORS,
+  SHORT_MSG,
+  COMMANDS,
+  LASTWORK_TIME,
+  BIGBREAK_TIME,
   createEmbedMsg
-} = require("./messages")
+} = require("./variables")
 
 // audio configuration
 const playerW = new PlayerWrapper()
-
-const COMMANDS = {
-  start: "ayt!start",
-  textonly: "ayt!tostart",
-  stop: "ayt!stop",
-  status: "ayt!status",
-  dm: "ayt!dm",
-  toggletext: "ayt!togtext",
-  volume: "ayt!volume",
-  help: "ayt!help",
-  clear: "ayt!clear",
-};
-
-const LASTWORK_TIME = [7, 15, 23];
-const BIGBREAK_TIME = [8, 16, 24];
-
 
 class Pomodoro {
   constructor(
@@ -98,10 +86,7 @@ class Pomodoro {
       if (this.time >= 25) {
         this.stopTimer();
 
-        var maxReachedMsg = new MessageEmbed()
-        .setColor('#f00')
-        .setTitle("Maximum pomodoro cycles reached!")
-        .setDescription("Take a break, have a kitkat")
+        var maxReachedMsg = createEmbedMsg("pomoMax")
         this.message.channel.send(
           {embed: [maxReachedMsg]}
         );
@@ -117,8 +102,8 @@ class Pomodoro {
       var alertMsg;
 
       if (this.time % 2 != 0 && !LASTWORK_TIME.includes(this.time)) {
-        this.interval = this.workTime;
         this.workCount ++;
+        this.interval = this.workTime;
         alertMsg = createEmbedMsg("shortBreak", this.workTime, this.smallBreak)
       } else if (LASTWORK_TIME.includes(this.time)) {
         this.workCount ++;
@@ -160,10 +145,10 @@ class Pomodoro {
   addToDM(id, message) {
     if (this.peopleToDm.filter((person) => person == id).length == 0) {
       this.peopleToDm.push(id);
-      message.reply("you will now receive the alerts via Direct Message!");
+      message.reply(SHORT_MSG.DM_ON);
     } else {
       this.peopleToDm = this.peopleToDm.filter((person) => person != id);
-      message.reply("you will stop receiving the alerts via Direct Message!");
+      message.reply(SHORT_MSG.DM_OFF);
     }
   }
 
@@ -171,9 +156,9 @@ class Pomodoro {
     this.textAlerts = !this.textAlerts;
 
     if (this.textAlerts) {
-      message.channel.send("The text notifications have been turned on!");
+      message.channel.send(SHORT_MSG.TEXT_NOTIF_ON);
     } else {
-      message.channel.send("The text notifications have been turned off!");
+      message.channel.send(SHORT_MSG.TEXT_NOTIF_OFF);
     }
   }
 
@@ -212,7 +197,7 @@ if (process.env.SH_TOKEN == "" || process.env.SH_TOKEN == undefined) {
 
 client.on("ready", () => {
   console.log("❤");
-  client.user.setActivity("Type ayt!help");
+  client.user.setActivity("ayt!help");
 });
 
 let container = new Container();
@@ -409,15 +394,13 @@ client.on("messageCreate", async (message) => {
 
     if (pomodoro[0].time % 2 != 0) {
       timeLeft = parseInt((pomodoro[0].workTime - timePassed) / 60000);
-      message.channel.send(
-        `${timeLeft + 1}min left to your break! Keep it up!`
-      );
+      message.channel.send({embeds: [createEmbedMsg("statusToBreak", timeLeft)]});
     } else if (pomodoro[0].time % 2 == 0 && pomodoro[0].time != 8) {
       timeLeft = parseInt((pomodoro[0].smallBreak - timePassed) / 60000);
-      message.channel.send(`${timeLeft + 1}min left to start working!`);
+      message.channel.send({embeds: [createEmbedMsg("statusToWork", timeLeft)]});
     } else {
       timeLeft = parseInt((pomodoro[0].bigBreak - timePassed) / 60000);
-      message.channel.send(`${timeLeft + 1}min left to start working!`);
+      message.channel.send({embeds: [createEmbedMsg("statusToWork", timeLeft)]});
     }
   }
 
@@ -499,7 +482,7 @@ client.on("messageCreate", async (message) => {
         message.channel.send(ERRORS.INVALID_VOLUME);
       } else {
         pomodoro[0].changeVolume(args[1] / 100);
-        message.channel.send(`The volume has been set to ${args[1]}`);
+        message.channel.send(`Volume set to ${args[1]}`);
       }
     } else {
       message.channel.send(

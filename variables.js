@@ -1,3 +1,21 @@
+// ====== COMMANDS ======
+const COMMANDS = {
+  start: "ayt!start",
+  textonly: "ayt!tostart",
+  stop: "ayt!stop",
+  status: "ayt!status",
+  dm: "ayt!dm",
+  toggletext: "ayt!togtext",
+  volume: "ayt!volume",
+  help: "ayt!help",
+  clear: "ayt!clear",
+};
+
+// ====== BREAK FREQUENCY ======
+const LASTWORK_TIME = [7, 15, 23];
+const BIGBREAK_TIME = [8, 16, 24];
+
+// ====== IMAGES ======
 const ALERT_IMG = {
   longBreakStart: "./visuals/break-start.jpg",
   breakStart: "./visuals/break-start.jpg",
@@ -6,9 +24,20 @@ const ALERT_IMG = {
   breakEnd: "./visuals/break-end.jpg",
 };
 
-// STATUS MESSAGES
+// ====== AUDIO ======
+const AUDIO = {
+  pomStart: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  pomEnd: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  shortBreakStart: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  shortBreakEnd: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  longBreakStart: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  longBreakEnd: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  pomEnd: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+}
+
+// ====== ERROR MESSAGES ======
 const ERRORS = {
-  INVALID_TIME: "Insert a valid time between 5 and 120 minutes!",
+  INVALID_TIME: "Please give a valid time between 5 and 120 minutes!",
   ALR_EXISTS: "There is already a pomodoro running!",
   VOICE_CHANNEL_ERR: "Unable to join voice channel - check bot permissions!",
   NOT_IN_VOICE_CHANNEL_JOIN:
@@ -25,6 +54,16 @@ const ERRORS = {
     "There was a problem with deleting messages - check bot permissions!",
 };
 
+// ====== NORMAL MESSAGES ======
+const SHORT_MSG = {
+  TEXT_NOTIF_OFF: "The text notifications have been turned on!",
+  TEXT_NOTIF_ON: "The text notifications have been turned off!",
+  DM_ON: "you will now receive the alerts via Direct Message!",
+  DM_OFF: "you will stop receiving the alerts via Direct Message!"
+}
+
+// ====== EMBED MESSAGES ======
+// (includes images, background color, formatting etc.)
 function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const SHORT_BREAK_MSG = {
     color: "#f00",
@@ -126,6 +165,17 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     description: `Total cycles: ${par1} | Total work time: ${par2 * par3 / 60000} min`,
   };
 
+  const POM_STATUS_TO_BREAK = {
+    color: "#f00",
+    title: `${par1 + 1}min left to your break! Keep it up!`,
+    // description: `Total cycles: ${par1} | Total work time: ${par2 * par3 / 60000} min`,
+  }
+
+  const POM_STATUS_TO_WORK = {
+    color: "#f00",
+    title: `${par1 + 1}min left to start working!`
+  }
+
   var msgBase;
   switch (type) {
     case "stop":
@@ -146,11 +196,24 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     case "help":
       msgBase = HELP_MSG;
       break;
+    case "pomoMax":
+      msgBase = POMO_MAX;
+      break;
+    case "statusToWork":
+      msgBase = POM_STATUS_TO_WORK
+      break;
+    case "statusToBreak":
+      msgBase = POM_STATUS_TO_BREAK;
+      break;
   }
   return msgBase;
 }
 
 module.exports = {
   ERRORS,
+  SHORT_MSG,
+  COMMANDS,
+  LASTWORK_TIME,
+  BIGBREAK_TIME,
   createEmbedMsg,
 };
