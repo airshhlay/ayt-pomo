@@ -1,7 +1,10 @@
 require("dotenv").config();
 const { MessageEmbed, Client, Intents } = require("discord.js");
 const { PlayerWrapper } = require("./voice");
-const {HELP_MSG, SHORT_BREAK_MSG, LONG_BREAK_MSG, WORK_RESUME_MSG, ERRORS} = require("./messages")
+const {
+  ERRORS,
+  createEmbedMsg
+} = require("./messages")
 
 // audio configuration
 const playerW = new PlayerWrapper()
@@ -48,8 +51,12 @@ class Pomodoro {
     this.timer = null;
     this.interval = null;
     this.textOnly = textOnly;
+
+    this.workCount = 0
+
+    var pomoStartMsg = createEmbedMsg("start", this.workTime, this.smallBreak, this.bigBreak)
     this.message.channel.send(
-      "Pomodoro started!"
+      {embeds: [pomoStartMsg]}
     );
 
 
@@ -91,8 +98,12 @@ class Pomodoro {
       if (this.time >= 25) {
         this.stopTimer();
 
+        var maxReachedMsg = new MessageEmbed()
+        .setColor('#f00')
+        .setTitle("Maximum pomodoro cycles reached!")
+        .setDescription("Take a break, have a kitkat")
         this.message.channel.send(
-          "You reached the maximum pomodoro cycles! Rest a little!"
+          {embed: [maxReachedMsg]}
         );
 
         if (!this.textOnly) {
@@ -107,28 +118,18 @@ class Pomodoro {
 
       if (this.time % 2 != 0 && !LASTWORK_TIME.includes(this.time)) {
         this.interval = this.workTime;
-        alertMsg = new MessageEmbed()
-        .setColor(SHORT_BREAK_MSG.color)
-        .setTitle(SHORT_BREAK_MSG.title)
-        .setDescription(SHORT_BREAK_MSG.desc(this.workTime, this.smallBreak))
+        this.workCount ++;
+        alertMsg = createEmbedMsg("shortBreak", this.workTime, this.smallBreak)
       } else if (LASTWORK_TIME.includes(this.time)) {
+        this.workCount ++;
         this.interval = this.workTime;
-        alertMsg = new MessageEmbed()
-        .setColor(LONG_BREAK_MSG.color)
-        .setTitle(LONG_BREAK_MSG.title)
-        .setDescription(LONG_BREAK_MSG.desc(this.workTime, this.smallBreak))
+        alertMsg = createEmbedMsg("longBreak", this.workTime, this.smallBreak)
       } else if (this.time % 2 == 0 && !BIGBREAK_TIME.includes(this.time)) {
         this.interval = this.smallBreak;
-        alertMsg = new MessageEmbed()
-        .setColor(WORK_RESUME_MSG.color)
-        .setTitle(WORK_RESUME_MSG.title)
-        .setDescription(WORK_RESUME_MSG.desc(this.smallBreak))
+        alertMsg = createEmbedMsg("workResume", this.workTime, this.smallBreak)
       } else if (BIGBREAK_TIME.includes(this.time)) {
         this.interval = this.bigBreak;
-        alertMsg = new MessageEmbed()
-        .setColor(WORK_RESUME_MSG.color)
-        .setTitle(WORK_RESUME_MSG.title)
-        .setDescription(WORK_RESUME_MSG.desc(this.longBreak))
+        alertMsg = createEmbedMsg("workResume", this.workTime, this.longBreak)
       }
 
       this.timerStartedTime = new Date();
@@ -148,6 +149,8 @@ class Pomodoro {
   }
 
   stopTimer() {
+    var summaryMsg = createEmbedMsg("stop", this.time, this.workCount, this.workTime)
+    this.sendRelevantAlerts(true, summaryMsg)
     clearTimeout(this.timer);
     if (!this.textOnly) {
       this.connection.destroy();
@@ -364,8 +367,6 @@ client.on("messageCreate", async (message) => {
       );
       return;
     }
-
-    // add pom start message
   }
 
   // Stop the pomodoro
@@ -421,11 +422,7 @@ client.on("messageCreate", async (message) => {
   }
 
   if (args[0] == COMMANDS.help) {
-    var helpMsg = new MessageEmbed()
-    .setColor(HELP_MSG.color)
-    .setTitle(HELP_MSG.title)
-    .setDescription(HELP_MSG.description)
-    .addFields(HELP_MSG.fields);
+    var helpMsg = createEmbedMsg("help")
     message.channel.send({ embeds: [helpMsg] });
   }
 
