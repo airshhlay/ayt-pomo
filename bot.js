@@ -1,30 +1,205 @@
 require("dotenv").config();
-const Pomodoro = require("./pomodoro")
-const Container = require("./container")
-const Discord = require("discord.js");
+const { MessageEmbed, Client, Intents } = require("discord.js");
+const { PlayerWrapper } = require("./voice");
+const {HELP_MSG, SHORT_BREAK_MSG, LONG_BREAK_MSG, WORK_RESUME_MSG, ERRORS} = require("./messages")
 
-const client = new Discord.Client();
+// audio configuration
+const playerW = new PlayerWrapper()
 
-
-const COMMANDS = [
-  "ayt!start",
-  "ayt!tostart",
-  "ayt!stop",
-  "ayt!status",
-  "ayt!dm",
-  "ayt!togtext",
-  "ayt!volume",
-  "ayt!help",
-  "ayt!clear",
-];
+const COMMANDS = {
+  start: "ayt!start",
+  textonly: "ayt!tostart",
+  stop: "ayt!stop",
+  status: "ayt!status",
+  dm: "ayt!dm",
+  toggletext: "ayt!togtext",
+  volume: "ayt!volume",
+  help: "ayt!help",
+  clear: "ayt!clear",
+};
 
 const LASTWORK_TIME = [7, 15, 23];
 const BIGBREAK_TIME = [8, 16, 24];
 
-// client connect
-setTimeout(() => {
-  client.ws.connection.triggerReady();
-}, 30000);
+
+class Pomodoro {
+  constructor(
+    workTime,
+    smallBreak,
+    bigBreak,
+    connection,
+    id,
+    message,
+    textOnly,
+    playerW
+  ) {
+    this.id = id;
+    this.workTime = workTime;
+    this.smallBreak = smallBreak;
+    this.bigBreak = bigBreak;
+    this.peopleToDm = [];
+    this.textAlerts = true;
+    this.volume = 0.5;
+    this.connection = connection;
+    this.message = message;
+    this.time = 1;
+    this.timerStartedTime = new Date();
+    this.dispatcher = null;
+    this.timer = null;
+    this.interval = null;
+    this.textOnly = textOnly;
+    this.message.channel.send(
+      "Pomodoro started!"
+    );
+
+
+    this.startANewCycle();
+  }
+
+  sendRelevantAlerts(embed, message) {
+      //Send Text Alerts
+      if (this.textAlerts) {
+        if (embed) {
+          this.message.channel.send({ embeds: [message] });
+        } else {
+          this.message.channel.send(message)
+        }
+      }
+
+      //Send DM Alerts
+      if (this.peopleToDm.length > 0) {
+        this.peopleToDm.forEach((person) => {
+          try {
+            if (embed) {
+              client.users.fetch(person).then(usr => {
+                usr.send({ embeds: [message] })
+              })
+            } else {
+              client.users.fetch(person).then(usr => {
+                usr.send(message)
+              })
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        });
+      }
+  }
+
+  startANewCycle() {
+    try {
+      if (this.time >= 25) {
+        this.stopTimer();
+
+        this.message.channel.send(
+          "You reached the maximum pomodoro cycles! Rest a little!"
+        );
+
+        if (!this.textOnly) {
+          this.connection.destroy();
+        }
+
+        container.removePomodoro(this.message.guild.id);
+        return;
+      }
+
+      var alertMsg;
+
+      if (this.time % 2 != 0 && !LASTWORK_TIME.includes(this.time)) {
+        this.interval = this.workTime;
+        alertMsg = new MessageEmbed()
+        .setColor(SHORT_BREAK_MSG.color)
+        .setTitle(SHORT_BREAK_MSG.title)
+        .setDescription(SHORT_BREAK_MSG.desc(this.workTime, this.smallBreak))
+      } else if (LASTWORK_TIME.includes(this.time)) {
+        this.interval = this.workTime;
+        alertMsg = new MessageEmbed()
+        .setColor(LONG_BREAK_MSG.color)
+        .setTitle(LONG_BREAK_MSG.title)
+        .setDescription(LONG_BREAK_MSG.desc(this.workTime, this.smallBreak))
+      } else if (this.time % 2 == 0 && !BIGBREAK_TIME.includes(this.time)) {
+        this.interval = this.smallBreak;
+        alertMsg = new MessageEmbed()
+        .setColor(WORK_RESUME_MSG.color)
+        .setTitle(WORK_RESUME_MSG.title)
+        .setDescription(WORK_RESUME_MSG.desc(this.smallBreak))
+      } else if (BIGBREAK_TIME.includes(this.time)) {
+        this.interval = this.bigBreak;
+        alertMsg = new MessageEmbed()
+        .setColor(WORK_RESUME_MSG.color)
+        .setTitle(WORK_RESUME_MSG.title)
+        .setDescription(WORK_RESUME_MSG.desc(this.longBreak))
+      }
+
+      this.timerStartedTime = new Date();
+
+      this.timer = setTimeout(() => {
+        this.time++;
+
+        //Send Text Alerts
+        this.sendRelevantAlerts(true, alertMsg)
+  
+        //Start a New Cycle
+        this.startANewCycle();
+      }, this.interval);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  stopTimer() {
+    clearTimeout(this.timer);
+    if (!this.textOnly) {
+      this.connection.destroy();
+    }
+  }
+
+  addToDM(id, message) {
+    if (this.peopleToDm.filter((person) => person == id).length == 0) {
+      this.peopleToDm.push(id);
+      message.reply("you will now receive the alerts via Direct Message!");
+    } else {
+      this.peopleToDm = this.peopleToDm.filter((person) => person != id);
+      message.reply("you will stop receiving the alerts via Direct Message!");
+    }
+  }
+
+  toggleNotifications(message) {
+    this.textAlerts = !this.textAlerts;
+
+    if (this.textAlerts) {
+      message.channel.send("The text notifications have been turned on!");
+    } else {
+      message.channel.send("The text notifications have been turned off!");
+    }
+  }
+
+  changeVolume(volume) {
+    this.volume = volume;
+  }
+}
+
+// container to manage pomodoro objects
+class Container {
+  constructor() {
+    this.pomodoros = [];
+  }
+
+  addPomodoro(pomodoro) {
+    this.pomodoros.push(pomodoro);
+  }
+
+  removePomodoro(id) {
+    this.pomodoros = this.pomodoros.filter((pomodoro) => pomodoro.id != id);
+  }
+}
+
+
+// run the bot
+const client = new Client({
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES],
+});
+
 
 if (process.env.SH_TOKEN == "" || process.env.SH_TOKEN == undefined) {
   client.login(process.env.DJS_TOKEN);
@@ -45,21 +220,21 @@ function checkParams(arg1, arg2, arg3, message) {
 
   if (arg1) {
     if (parseInt(arg1) < 5 || parseInt(arg1) > 120 || isNaN(parseInt(arg1))) {
-      message.channel.send("Insert a valid time between 5 and 120 minutes!");
+      message.channel.send(ERRORS.VALID_TIME);
       checked = false;
     }
   }
 
   if (arg2) {
     if (parseInt(arg2) < 5 || parseInt(arg2) > 120 || isNaN(parseInt(arg2))) {
-      message.channel.send("Insert a valid time between 5 and 120 minutes!");
+      message.channel.send(ERRORS.VALID_TIME);
       checked = false;
     }
   }
 
   if (arg3) {
     if (parseInt(arg3) < 5 || parseInt(arg3) > 120 || isNaN(parseInt(arg3))) {
-      message.channel.send("Insert a valid time between 5 and 120 minutes!");
+      message.channel.send(ERRORS.VALID_TIME);
       checked = false;
     }
   }
@@ -69,24 +244,25 @@ function checkParams(arg1, arg2, arg3, message) {
 
 setInterval(() => {}, 600000);
 
-client.on("message", async (message) => {
+// listen for command
+client.on("messageCreate", async (message) => {
   if (!message.guild) return;
 
   const args = message.content.trim().split(" ");
 
-  if (args[0] === COMMANDS[1]) {
-    //Check arguments
+  if (args[0] === COMMANDS.textonly) {
+    // validate parameters
     if (!checkParams(args[1], args[2], args[3], message)) {
       return;
     }
 
-    //Check if there's already a pomodoro running on the server
+    // Check if there's already a pomodoro running on the server
     let pomodoro = container.pomodoros.filter(
       (pomodoro) => pomodoro.id == message.guild.id
     );
 
     if (pomodoro.length > 0) {
-      message.reply("There's already a pomodoro running!");
+      message.reply(ERRORS.ALR_EXISTS);
       return;
     }
 
@@ -101,7 +277,8 @@ client.on("message", async (message) => {
             null,
             message.guild.id,
             message,
-            true
+            true,
+            playerW
           )
         );
       } else {
@@ -113,93 +290,98 @@ client.on("message", async (message) => {
             null,
             message.guild.id,
             message,
-            true
+            true,
+            playerW
           )
         );
       }
     } catch (err) {
       console.log(err);
       message.channel.send(
-        "I'm struggling to join your voice channel! Please check my permissions!"
+       ERRORS.VOICE_CHANNEL_ERR
       );
       return;
     }
-
-    message.channel.send("Pomodoro started! Let's get to work!");
+    // add pom start message
   }
 
-  if (args[0] === COMMANDS[0]) {
-    //Check arguments
+  if (args[0] === COMMANDS.start) {
+    // Check arguments
     if (!checkParams(args[1], args[2], args[3], message)) {
       return;
     }
 
-    if (message.member.voiceChannel) {
+    if (message.member.voice.channel) {
       let pomodoro = container.pomodoros.filter(
         (pomodoro) => pomodoro.id == message.guild.id
       );
 
       if (pomodoro.length > 0) {
-        message.reply("There's already a pomodoro running!");
+        message.reply(ERRORS.ALR_EXISTS);
         return;
       }
 
       try {
         if (args[1] && args[2] && args[3]) {
+          var channel = await playerW.connectToChannel(message)
           container.addPomodoro(
             new Pomodoro(
               parseInt(args[1] * 60000),
               parseInt(args[2] * 60000),
               parseInt(args[3] * 60000),
-              await message.member.voiceChannel.join(),
+              channel,
               message.guild.id,
               message,
-              false
+              false,
+              playerW
             )
           );
         } else {
+          var channel = await playerW.connectToChannel(message)
           container.addPomodoro(
             new Pomodoro(
               1500000,
               300000,
               900000,
-              await message.member.voiceChannel.join(),
+              channel,
               message.guild.id,
               message,
-              false
+              false,
+              playerW
             )
           );
         }
       } catch (err) {
         console.log(err);
         message.channel.send(
-          "I'm struggling to join your voice channel! Please check my permissions!"
+          ERRORS.VOICE_CHANNEL_ERR
         );
         return;
       }
     } else {
       message.channel.send(
-        "You have to be in a voice channel to start a pomodoro!"
+        ERRORS.NOT_IN_VOICE_CHANNEL_JOIN
       );
       return;
     }
-    message.channel.send("Pomodoro started! Let's get to work!");
+
+    // add pom start message
   }
 
-  //Stop the pomodoro
-  if (args[0] == COMMANDS[2]) {
+  // Stop the pomodoro
+  if (args[0] == COMMANDS.stop) {
     let pomodoroStop = container.pomodoros.filter(
       (pomodoro) => pomodoro.id == message.guild.id
     );
 
     if (pomodoroStop.length == 0) {
-      message.reply("There's no pomodoro currently running!");
+      message.reply(ERRORS.NO_POMO);
       return;
     }
 
     if (!pomodoroStop[0].textOnly) {
-      if (!message.member.voiceChannel) {
-        message.reply("You are not in a voice channel!");
+      if (!message.member.voice.channel) {
+        message.reply(ERRORS.NOT_IN_POMO);
         return;
       }
     }
@@ -207,20 +389,16 @@ client.on("message", async (message) => {
     pomodoroStop[0].stopTimer();
     container.removePomodoro(message.guild.id);
 
-    message.channel.send("Nice work! Glad I could help!");
-
-    if (!pomodoroStop[0].textOnly) {
-      message.member.voiceChannel.leave();
-    }
+    // add pom stop message
   }
 
-  if (args[0] == COMMANDS[3]) {
+  if (args[0] == COMMANDS.status) {
     let pomodoro = container.pomodoros.filter(
       (pomodoro) => pomodoro.id == message.guild.id
     );
 
     if (pomodoro.length == 0) {
-      message.reply("There's no pomodoro currently running!");
+      message.reply(ERRORS.NO_POMO);
       return;
     }
 
@@ -242,82 +420,28 @@ client.on("message", async (message) => {
     }
   }
 
-  if (args[0] == COMMANDS[7]) {
-    const helpCommands = new Discord.RichEmbed()
-      .setColor("#f00")
-      .setTitle("Pomodore commands")
-      .setDescription("Here is the list of commands to use the bot!");
-    [
-      {
-        name: "Start the pomodoro with default values (25, 5, 15)",
-        value: "ayt!start",
-        isInline: true,
-      },
-      {
-        name: "Start a text-only pomodoro with default values",
-        value: "ayt!tostart",
-        isInline: true,
-      },
-      {
-        name: "Start the pomodoro with specific values",
-        value: "ayt!start [work time] [small break time] [big break time]",
-        isInline: true,
-      },
-      {
-        name: "Start a text-only pomodoro with specific values",
-        value: "ayt!tostart [work time] [small break time] [big break time]",
-        isInline: true,
-      },
-      {
-        name: "Stop the pomodoro",
-        value: "ayt!stop",
-        isInline: true,
-      },
-      {
-        name: "Check the current status of the pomodoro",
-        value: "ayt!status",
-        isInline: true,
-      },
-      {
-        name: "Toggle the notifications via direct message",
-        value: "ayt!dm",
-        isInline: true,
-      },
-      {
-        name: "Toggle the channel text notifications",
-        value: "ayt!togtext",
-        isInline: true,
-      },
-      {
-        name: "Change the volume of the alerts, defaults to 50",
-        value: "ayt!volume volume",
-        isInline: true,
-      },
-      {
-        name: "Get the list of commands",
-        value: "ayt!help",
-        isInline: true,
-      },
-    ].forEach(({ name, value, isInline }) => {
-      helpCommands.addField(name, value, isInline);
-    });
-
-    message.author.send(helpCommands);
+  if (args[0] == COMMANDS.help) {
+    var helpMsg = new MessageEmbed()
+    .setColor(HELP_MSG.color)
+    .setTitle(HELP_MSG.title)
+    .setDescription(HELP_MSG.description)
+    .addFields(HELP_MSG.fields);
+    message.channel.send({ embeds: [helpMsg] });
   }
 
-  if (args[0] == COMMANDS[4]) {
+  if (args[0] == COMMANDS.dm) {
     let pomodoro = container.pomodoros.filter(
       (pomodoro) => pomodoro.id == message.guild.id
     );
 
     if (pomodoro.length == 0) {
-      message.reply("There's no pomodoro currently running!");
+      message.reply(ERRORS.NO_POMO);
       return;
     }
 
     if (!pomodoro[0].textOnly) {
-      if (!message.member.voiceChannel) {
-        message.reply("You are not in a voice channel!");
+      if (!message.member.voice.channel) {
+        message.reply(ERRORS.NOT_IN_POMO);
         return;
       }
     }
@@ -325,13 +449,13 @@ client.on("message", async (message) => {
     pomodoro[0].addToDM(message.author.id, message);
   }
 
-  if (args[0] == COMMANDS[5]) {
+  if (args[0] == COMMANDS.toggletext) {
     let pomodoro = container.pomodoros.filter(
       (pomodoro) => pomodoro.id == message.guild.id
     );
 
     if (pomodoro.length == 0) {
-      message.reply("There's no pomodoro currently running!");
+      message.reply(ERRORS.NO_POMO);
       return;
     }
 
@@ -339,34 +463,34 @@ client.on("message", async (message) => {
       pomodoro[0].toggleNotifications(message);
     } else {
       message.channel.send(
-        "You can't disable text messages in a text-only pomodoro!"
+        ERRORS.DISABLE_TEXT_IN_TEXTONLY
       );
       return;
     }
 
-    if (!message.member.voiceChannel) {
-      message.reply("You are not in a voice channel!");
+    if (!message.member.voice.channel) {
+      message.reply(ERRORS.NOT_IN_POMO);
       return;
     }
   }
 
-  if (args[0] == COMMANDS[6]) {
+  if (args[0] == COMMANDS.volume) {
     let pomodoro = container.pomodoros.filter(
       (pomodoro) => pomodoro.id == message.guild.id
     );
 
     if (pomodoro[0].textOnly) {
-      message.reply("You can't change the volume of a text-only pomodoro!");
+      message.reply(ERRORS.CHANGE_VOLUME_IN_TEXTONLY);
       return;
     }
 
     if (pomodoro.length == 0) {
-      message.reply("There's no pomodoro currently running!");
+      message.reply(ERRORS.NO_POMO);
       return;
     }
 
-    if (!message.member.voiceChannel) {
-      message.reply("You are not in a voice channel!");
+    if (!message.member.voice.channel) {
+      message.reply(ERRORS.NOT_IN_POMO);
       return;
     }
 
@@ -375,23 +499,23 @@ client.on("message", async (message) => {
         parseInt(args[1]) < 1 ||
         parseInt(args[1] > 100 || isNaN(parseInt(args[1])))
       ) {
-        message.channel.send("Please insert a valid number between 0 and 100");
+        message.channel.send(ERRORS.INVALID_VOLUME);
       } else {
         pomodoro[0].changeVolume(args[1] / 100);
         message.channel.send(`The volume has been set to ${args[1]}`);
       }
     } else {
       message.channel.send(
-        "Please type a second argument with a number between 0 and 100"
+       ERRORS.NO_VOLUME_ARG
       );
     }
   }
 
-  if (args[0] == COMMANDS[8]) {
+  if (args[0] == COMMANDS.clear) {
     let messagesProcessed = 0;
     let allDeleted = true;
     message.channel
-      .fetchMessages({ limit: 30 })
+      .fetch({ limit: 30 })
       .then((messages) => {
         messages.forEach((message) => {
           let messageContent = message.content.trim().split(" ");
@@ -406,7 +530,7 @@ client.on("message", async (message) => {
                 if (messagesProcessed == 29) {
                   if (!allDeleted) {
                     message.channel.send(
-                      "There was a problem deleting some of the messages! Please check my permissions!"
+                      ERRORS.DELETE_MSG_ERR
                     );
                   }
                 }
@@ -418,7 +542,7 @@ client.on("message", async (message) => {
                 if (messagesProcessed == 29) {
                   if (!allDeleted) {
                     message.channel.send(
-                      "There was a problem deleting some of the messages! Please check my permissions!"
+                      ERRORS.DELETE_MSG_ERR
                     );
                   }
                 }
@@ -428,7 +552,7 @@ client.on("message", async (message) => {
       })
       .catch(() => {
         message.channel.send(
-          "There was a problem deleting the messages! Please check my permissions!"
+          ERRORS.DELETE_MSG_ERR
         );
       });
   }
