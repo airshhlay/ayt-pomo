@@ -1,6 +1,9 @@
 {
   "name": "ayato_pomodoro",
   "version": "1.0.0",
+  "engines": {
+    "node": "17.x"
+  },
   "description": "",
   "main": "bot.js",
   "scripts": {
