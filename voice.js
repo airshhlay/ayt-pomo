@@ -7,7 +7,7 @@ const {
   AudioPlayerStatus,
   VoiceConnectionStatus,
 } = require("@discordjs/voice");
-const { connect } = require("amqplib/lib/connect");
+// const { connect } = require("amqplib/lib/connect");
 const AUDIO_TITLES = {
   breakStart: "breakStart",
   pomStart: "pomStart",
