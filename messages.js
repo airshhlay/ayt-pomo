@@ -1,5 +1,3 @@
-const { message } = require("antd");
-const { MessageEmbed } = require("discord.js");
 const ALERT_IMG = {
   longBreakStart: "./visuals/break-start.jpg",
   breakStart: "./visuals/break-start.jpg",
