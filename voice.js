@@ -38,13 +38,13 @@ class PlayerWrapper {
       let resource = createAudioResource(AUDIO[name], {
         inputType: StreamType.Arbitrary
       })
-      console.log(resource)
       if (resource) {
+        console.log(`playing audio resource: ${name}`)
         this.player.play(resource);
         return entersState(this.player, AudioPlayerStatus.Playing, 5e3);
       }
     }
-    console.log("audio resource not found")
+    console.log(`audio resource ${name} not found`)
   }
 }
 
