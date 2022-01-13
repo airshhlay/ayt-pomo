@@ -38,8 +38,8 @@ const COMMON_THUMBNAIL = {
 
 // ====== AUDIO ======
 const AUDIO = {
-  break: "https://www.dropbox.com/s/dbsn4hz2hogl3wq/thoma-theme-2.mp3?raw=1",
-  work: "https://www.dropbox.com/s/6x97u0j634ljz73/thoma-theme-1.mp3?raw=1"
+  break: "https://www.dropbox.com/s/dbsn4hz2hogl3wq/break-thoma-theme.mp3?raw=1",
+  work: "https://www.dropbox.com/s/6x97u0j634ljz73/work-thoma-theme.mp3?raw=1"
 }
 
 // ====== ERROR MESSAGES ======
