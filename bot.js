@@ -126,7 +126,7 @@ class Pomodoro {
         this.workCount ++;
         this.interval = this.bigBreak;
         this.audio = "work"
-        alertMsg = createEmbedMsg("workResume", this.workTime, this.longBreak)
+        alertMsg = createEmbedMsg("workResume", this.workTime, this.bigBreak)
       }
 
       this.timerStartedTime = new Date();
