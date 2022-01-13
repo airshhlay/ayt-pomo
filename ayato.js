@@ -93,12 +93,6 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     description: `Work duration: ${par1 / 60000} min | Short break: ${
       par2 / 60000 
     } min | Long break: ${par3 / 60000} min`,
-    image: {
-      url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?dl=0"
-    },
-    thumbnail: {
-      url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?dl=0"
-    }
   };
 
   const HELP_MSG = {

@@ -1,5 +1,5 @@
 {
-  "name": "ayato_pomodoro",
+  "name": "pomo-bot",
   "version": "1.0.0",
   "engines": {
     "node": "17.x"
@@ -17,7 +17,6 @@
     "discord.js": "^13.5.1",
     "dotenv": "^11.0.0",
     "ffmpeg-static": "^4.4.1",
-    "nodemon": "^2.0.15",
     "opusscript": "^0.0.8",
     "tweetnacl": "^1.0.3"
   }
