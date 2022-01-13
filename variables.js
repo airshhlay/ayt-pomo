@@ -1,38 +1,45 @@
 // ====== COMMANDS ======
-const COMMANDS = {
-  start: "ayt!start",
-  textonly: "ayt!tostart",
-  stop: "ayt!stop",
-  status: "ayt!status",
-  dm: "ayt!dm",
-  toggletext: "ayt!togtext",
-  volume: "ayt!volume",
-  help: "ayt!help",
-  clear: "ayt!clear",
-};
+var COMMANDS = {}; 
+
+if (process.env.LOCAL_TEST) {
+  COMMANDS = {
+    start: "bot!start",
+    textonly: "bot!tostart",
+    stop: "bot!stop",
+    status: "bot!status",
+    dm: "bot!dm",
+    toggletext: "bot!togtext",
+    volume: "bot!volume",
+    help: "bot!help",
+    clear: "bot!clear",
+  };
+} else {
+  COMMANDS = {
+    start: "ayt!start",
+    textonly: "ayt!tostart",
+    stop: "ayt!stop",
+    status: "ayt!status",
+    dm: "ayt!dm",
+    toggletext: "ayt!togtext",
+    volume: "ayt!volume",
+    help: "ayt!help",
+    clear: "ayt!clear",
+  };
+}
 
 // ====== BREAK FREQUENCY ======
 const LASTWORK_TIME = [7, 15, 23];
 const BIGBREAK_TIME = [8, 16, 24];
 
 // ====== IMAGES ======
-const ALERT_IMG = {
-  longBreakStart: "./visuals/break-start.jpg",
-  breakStart: "./visuals/break-start.jpg",
-  pomEnd: "./visuals/pom-end.gif",
-  pomStart: "./visuals/pom-start.jpg",
-  breakEnd: "./visuals/break-end.jpg",
-};
+const COMMON_THUMBNAIL = {
+  url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?raw=1"
+}
 
 // ====== AUDIO ======
 const AUDIO = {
-  pomStart: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  pomEnd: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  shortBreakStart: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  shortBreakEnd: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  longBreakStart: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  longBreakEnd: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  pomEnd: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+  break: "https://www.dropbox.com/s/dbsn4hz2hogl3wq/thoma-theme-2.mp3?raw=1",
+  work: "https://www.dropbox.com/s/6x97u0j634ljz73/thoma-theme-1.mp3?raw=1"
 }
 
 // ====== ERROR MESSAGES ======
@@ -94,10 +101,10 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
       par2 / 60000 
     } min | Long break: ${par3 / 60000} min`,
     image: {
-      url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?dl=0"
+      url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?raw=1"
     },
     thumbnail: {
-      url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?dl=0"
+      url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?raw=1"
     }
   };
 
@@ -168,7 +175,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const POMO_STOP_MSG = {
     color: "#f00",
     title: "Pomodoro session ended! Here's a summary:",
-    description: `Total cycles: ${par1} | Total work time: ${par2 * par3 / 60000} min`,
+    description: `Time elapsed: ${par1} | Total completed work cycles: ${par2}`,
   };
 
   const POM_STATUS_TO_BREAK = {
@@ -212,6 +219,12 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
       msgBase = POM_STATUS_TO_BREAK;
       break;
   }
+
+
+  // add in common thumbnail
+  if (!msgBase.thumbnail) {
+    msgBase.thumbnail = COMMON_THUMBNAIL;
+  }
   return msgBase;
 }
 
@@ -221,5 +234,6 @@ module.exports = {
   COMMANDS,
   LASTWORK_TIME,
   BIGBREAK_TIME,
+  AUDIO,
   createEmbedMsg,
 };

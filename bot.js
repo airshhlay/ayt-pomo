@@ -21,8 +21,7 @@ class Pomodoro {
     connection,
     id,
     message,
-    textOnly,
-    playerW
+    textOnly
   ) {
     this.id = id;
     this.workTime = workTime;
@@ -34,11 +33,13 @@ class Pomodoro {
     this.connection = connection;
     this.message = message;
     this.time = 1;
+    this.pomoCreatedTime = new Date();
     this.timerStartedTime = new Date();
     this.dispatcher = null;
     this.timer = null;
     this.interval = null;
     this.textOnly = textOnly;
+    this.audio = ""
 
     this.workCount = 0
 
@@ -59,6 +60,10 @@ class Pomodoro {
         } else {
           this.message.channel.send(message)
         }
+      }
+
+      if (!this.textOnly && this.connection) {
+        playerW.playSong(this.audio)
       }
 
       //Send DM Alerts
@@ -82,6 +87,9 @@ class Pomodoro {
   }
 
   startANewCycle() {
+    console.log("CURRENT CYCLE")
+    console.log("time: " + this.time)
+    console.log("interval: " + this.interval)
     try {
       if (this.time >= 25) {
         this.stopTimer();
@@ -102,18 +110,22 @@ class Pomodoro {
       var alertMsg;
 
       if (this.time % 2 != 0 && !LASTWORK_TIME.includes(this.time)) {
-        this.workCount ++;
         this.interval = this.workTime;
+        this.audio = "break"
         alertMsg = createEmbedMsg("shortBreak", this.workTime, this.smallBreak)
       } else if (LASTWORK_TIME.includes(this.time)) {
-        this.workCount ++;
         this.interval = this.workTime;
+        this.audio = "break"
         alertMsg = createEmbedMsg("longBreak", this.workTime, this.smallBreak)
       } else if (this.time % 2 == 0 && !BIGBREAK_TIME.includes(this.time)) {
+        this.workCount ++;
         this.interval = this.smallBreak;
+        this.audio = "work"
         alertMsg = createEmbedMsg("workResume", this.workTime, this.smallBreak)
       } else if (BIGBREAK_TIME.includes(this.time)) {
+        this.workCount ++;
         this.interval = this.bigBreak;
+        this.audio = "work"
         alertMsg = createEmbedMsg("workResume", this.workTime, this.longBreak)
       }
 
@@ -121,6 +133,11 @@ class Pomodoro {
 
       this.timer = setTimeout(() => {
         this.time++;
+
+        console.log("CYCLE OVER, STARTING NEXT CYCLE")
+        console.log("time: " + this.time)
+        console.log("interval: " + this.interval)
+        console.log(": " + this.interval)
 
         //Send Text Alerts
         this.sendRelevantAlerts(true, alertMsg)
@@ -134,7 +151,8 @@ class Pomodoro {
   }
 
   stopTimer() {
-    var summaryMsg = createEmbedMsg("stop", this.time, this.workCount, this.workTime)
+    var timeElapsed = Math.floor((new Date().getTime() - this.pomoCreatedTime.getTime()) / 60000)
+    var summaryMsg = createEmbedMsg("stop", timeElapsed, this.workCount)
     this.sendRelevantAlerts(true, summaryMsg)
     clearTimeout(this.timer);
     if (!this.textOnly) {
@@ -206,26 +224,26 @@ let container = new Container();
 function checkParams(arg1, arg2, arg3, message) {
   let checked = true;
 
-  if (arg1) {
-    if (parseInt(arg1) < 5 || parseInt(arg1) > 120 || isNaN(parseInt(arg1))) {
-      message.channel.send(ERRORS.VALID_TIME);
-      checked = false;
-    }
-  }
+  // if (arg1) {
+  //   if (parseInt(arg1) < 5 || parseInt(arg1) > 120 || isNaN(parseInt(arg1))) {
+  //     message.channel.send(ERRORS.INVALID_TIME);
+  //     checked = false;
+  //   }
+  // }
 
-  if (arg2) {
-    if (parseInt(arg2) < 5 || parseInt(arg2) > 120 || isNaN(parseInt(arg2))) {
-      message.channel.send(ERRORS.VALID_TIME);
-      checked = false;
-    }
-  }
+  // if (arg2) {
+  //   if (parseInt(arg2) < 5 || parseInt(arg2) > 120 || isNaN(parseInt(arg2))) {
+  //     message.channel.send(ERRORS.INVALID_TIME);
+  //     checked = false;
+  //   }
+  // }
 
-  if (arg3) {
-    if (parseInt(arg3) < 5 || parseInt(arg3) > 120 || isNaN(parseInt(arg3))) {
-      message.channel.send(ERRORS.VALID_TIME);
-      checked = false;
-    }
-  }
+  // if (arg3) {
+  //   if (parseInt(arg3) < 5 || parseInt(arg3) > 120 || isNaN(parseInt(arg3))) {
+  //     message.channel.send(ERRORS.INVALID_TIME);
+  //     checked = false;
+  //   }
+  // }
 
   return checked;
 }
@@ -265,8 +283,7 @@ client.on("messageCreate", async (message) => {
             null,
             message.guild.id,
             message,
-            true,
-            playerW
+            true
           )
         );
       } else {
@@ -278,8 +295,7 @@ client.on("messageCreate", async (message) => {
             null,
             message.guild.id,
             message,
-            true,
-            playerW
+            true
           )
         );
       }
@@ -320,8 +336,7 @@ client.on("messageCreate", async (message) => {
               channel,
               message.guild.id,
               message,
-              false,
-              playerW
+              false
             )
           );
         } else {
@@ -334,8 +349,7 @@ client.on("messageCreate", async (message) => {
               channel,
               message.guild.id,
               message,
-              false,
-              playerW
+              false
             )
           );
         }
