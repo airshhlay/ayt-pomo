@@ -175,7 +175,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const POMO_STOP_MSG = {
     color: "#f00",
     title: "Pomodoro session ended! Here's a summary:",
-    description: `Time elapsed: ${par1} | Total completed work cycles: ${par2}`,
+    description: `Time elapsed: ${par1} min | Total completed work cycles: ${par2}`,
   };
 
   const POM_STATUS_TO_BREAK = {
