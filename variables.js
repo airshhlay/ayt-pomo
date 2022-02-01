@@ -33,9 +33,9 @@ const BIGBREAK_TIME = [8, 16, 24];
 
 // ====== IMAGES ======
 const COMMON_THUMBNAIL = {
-//   url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?raw=1"
-  url: "https://www.dropbox.com/s/c4pjyfx0cf03058/kamisato-namecard-ayato.png?raw=1"
-}
+//   url: "https://www.dropbox.com/s/c4pjyfx0cf03058/kamisato-namecard-ayato.png?raw=1"
+};
+const USE_COMMON_THUMBNAIL = False;
 
 // ====== AUDIO ======
 const AUDIO = {
@@ -178,7 +178,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     title: "Work hours are over~",
     description: `We've worked for ${par1} min~\n Total completed work cycles: ${par2}\nHmm... time to see what Thoma is up to~`,
     image: {
-      url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?raw=1"
+      url: "https://www.dropbox.com/s/7dzdv8m8dcm361d/kamisato-namecard.png?raw=1"
     },
   };
 
@@ -226,7 +226,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
 
   // add in common thumbnail
-  if (!msgBase.thumbnail) {
+  if (!msgBase.thumbnail && USE_COMMON_THUMBNAIL) {
     msgBase.thumbnail = COMMON_THUMBNAIL;
   }
   return msgBase;
