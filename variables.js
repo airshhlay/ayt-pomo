@@ -66,7 +66,7 @@ const ERRORS = {
 const SHORT_MSG = {
   TEXT_NOTIF_OFF: "Alright, I will send you text notifications~",
   TEXT_NOTIF_ON: "I will stop sending text notifications~",
-  DM_ON: "You want to message you directly instead? Fufu, how bold of you~ Fine, since I am bored of my paperwork~",
+  DM_ON: "You want me to message you directly instead? Fufu, how bold of you~",
   DM_OFF: "Heh, no more direct messages for you~"
 }
 
