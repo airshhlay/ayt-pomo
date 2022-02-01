@@ -184,13 +184,13 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
   const POM_STATUS_TO_BREAK = {
     color: "#f00",
-    title: `${par1 + 1}min left to our break, no slacking off~`,
+    description: `${par1 + 1}min left to our break, no slacking off~`,
     // description: `Total cycles: ${par1} | Total work time: ${par2 * par3 / 60000} min`,
   }
 
   const POM_STATUS_TO_WORK = {
     color: "#f00",
-    title: `${par1 + 1}min left before work time again~`
+    description: `${par1 + 1}min left before work time again~`
   }
 
   var msgBase;
