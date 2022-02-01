@@ -92,15 +92,15 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const WORK_RESUME_MSG = {
     color: "#f00",
     title: "Back to work",
-    description: `Our ${par2 / 60000} min break has ended... A pity. Unfortunately, this work is not going to do itself.`,
+    description: `Our ${par2 / 60000} minute break has ended... A pity. Unfortunately, this work is not going to do itself.`,
   };
 
   const POMO_START_MSG = {
     color: "#f00",
     title: "Ah... another work day",
-    description: `Work duration: ${par1 / 60000} min\n Short break: ${
+    description: `Work duration: ${par1 / 60000} minutes\n Short break: ${
       par2 / 60000 
-    } min\n Long break: ${par3 / 60000} min`,
+    } minutes\n Long break: ${par3 / 60000} minutes`,
 //     image: {
 //       url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?raw=1"
 //     },
@@ -176,7 +176,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const POMO_STOP_MSG = {
     color: "#f00",
     title: "Work hours are over~",
-    description: `We've worked for: ${par1} min\n Total completed work cycles: ${par2}\nHmm... time to see what Thoma is up to~`,
+    description: `We've worked for: ${par1} minutes\n Total completed work cycles: ${par2}\nHmm... time to see what Thoma is up to~`,
     image: {
       url: "https://www.dropbox.com/s/7dzdv8m8dcm361d/kamisato-namecard.png?raw=1"
     },
@@ -184,12 +184,12 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
   const POM_STATUS_TO_BREAK = {
     color: "#f00",
-    description: `${par1 + 1} min left to our break, no slacking off~`
+    description: `${par1 + 1} minutes left to our break, no slacking off~`
   }
 
   const POM_STATUS_TO_WORK = {
     color: "#f00",
-    description: `${par1 + 1} min left before work time again~`
+    description: `${par1 + 1} minutes left before work time again~`
   }
 
   var msgBase;
