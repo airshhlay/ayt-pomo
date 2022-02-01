@@ -35,7 +35,7 @@ const BIGBREAK_TIME = [8, 16, 24];
 const COMMON_THUMBNAIL = {
 //   url: "https://www.dropbox.com/s/c4pjyfx0cf03058/kamisato-namecard-ayato.png?raw=1"
 };
-const USE_COMMON_THUMBNAIL = False;
+const USE_COMMON_THUMBNAIL = false;
 
 // ====== AUDIO ======
 const AUDIO = {
@@ -184,8 +184,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
   const POM_STATUS_TO_BREAK = {
     color: "#f00",
-    description: `${par1 + 1}min left to our break, no slacking off~`,
-    // description: `Total cycles: ${par1} | Total work time: ${par2 * par3 / 60000} min`,
+    description: `${par1 + 1}min left to our break, no slacking off~`
   }
 
   const POM_STATUS_TO_WORK = {
