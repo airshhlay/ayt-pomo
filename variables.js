@@ -34,7 +34,7 @@ const BIGBREAK_TIME = [8, 16, 24];
 // ====== IMAGES ======
 const COMMON_THUMBNAIL = {
 //   url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?raw=1"
-  url: "https://www.dropbox.com/s/7dzdv8m8dcm361d/kamisato-namecard.png?raw=1"
+  url: "https://www.dropbox.com/s/c4pjyfx0cf03058/kamisato-namecard-ayato.png?raw=1"
 }
 
 // ====== AUDIO ======
