@@ -33,7 +33,8 @@ const BIGBREAK_TIME = [8, 16, 24];
 
 // ====== IMAGES ======
 const COMMON_THUMBNAIL = {
-  url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?raw=1"
+//   url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?raw=1"
+  url: "https://www.dropbox.com/s/7dzdv8m8dcm361d/kamisato-namecard.png?raw=1"
 }
 
 // ====== AUDIO ======
@@ -100,12 +101,12 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     description: `Work duration: ${par1 / 60000} min\n Short break: ${
       par2 / 60000 
     } min\n Long break: ${par3 / 60000} min`,
-    image: {
-      url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?raw=1"
-    },
-    thumbnail: {
-      url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?raw=1"
-    }
+//     image: {
+//       url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?raw=1"
+//     },
+//     thumbnail: {
+//       url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?raw=1"
+//     }
   };
 
   const HELP_MSG = {
@@ -176,6 +177,9 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     color: "#f00",
     title: "Work hours are over~",
     description: `We've worked for ${par1} min~\n Total completed work cycles: ${par2}\nHmm... time to see what Thoma is up to~`,
+    image: {
+      url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?raw=1"
+    },
   };
 
   const POM_STATUS_TO_BREAK = {
