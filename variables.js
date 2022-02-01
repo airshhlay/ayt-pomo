@@ -44,29 +44,29 @@ const AUDIO = {
 
 // ====== ERROR MESSAGES ======
 const ERRORS = {
-  INVALID_TIME: "Please give a valid time between 5 and 120 minutes!",
-  ALR_EXISTS: "There is already a pomodoro running!",
-  VOICE_CHANNEL_ERR: "Unable to join voice channel - check bot permissions!",
+  INVALID_TIME: "I need a valid time between 5 and 120 minutes.",
+  ALR_EXISTS: "We're already working, we should finish that one up first.",
+  VOICE_CHANNEL_ERR: "I can't join your voice channel... hmmm... you.. did not give me permission?",
   NOT_IN_VOICE_CHANNEL_JOIN:
-    "You need to join a voice channel to start this pomodoro",
-  NOT_IN_POMO: "You are not in the voice channel",
-  NO_POMO: "There are no pomodoros running",
+    "Fufu... you missed a step - join a voice channel first.",
+  NOT_IN_POMO: "Hmm... you're not part of my voice channel. Heh, thought you could fool me? Join the one I'm in before trying any commands.",
+  NO_POMO: "I haven't started work, but you're giving me this command? Pfft. Interesting.",
   DISABLE_TEXT_IN_TEXTONLY:
-    "You cannot disable text messages in a text-only pomodoro",
+    "Pfft, you can't disable text in a text-only pomodoro...",
   CHANGE_VOLUME_IN_TEXTONLY:
-    "You can't change the volume in a text-only pomodoro",
-  INVALID_VOLUME: "Please give a value between 1 to 100",
-  NO_VOLUME_ARG: "Please give a second argument for the volume",
+    "Pfft, you can't change the volume in a text-only pomodoro...",
+  INVALID_VOLUME: "Volumes can only be between 1 to 100~",
+  NO_VOLUME_ARG: "Give me a concrete number so I can change the volume~",
   DELETE_MSG_ERR:
-    "There was a problem with deleting messages - check bot permissions!",
+    "You didn't give me permission, but you're asking me to delete the channel's messages? Try again~",
 };
 
 // ====== NORMAL MESSAGES ======
 const SHORT_MSG = {
-  TEXT_NOTIF_OFF: "The text notifications have been turned on!",
-  TEXT_NOTIF_ON: "The text notifications have been turned off!",
-  DM_ON: "you will now receive the alerts via Direct Message!",
-  DM_OFF: "you will stop receiving the alerts via Direct Message!"
+  TEXT_NOTIF_OFF: "Alright, I will send you text notifications~",
+  TEXT_NOTIF_ON: "I will stop sending text notifications~",
+  DM_ON: "You want to message you directly instead? Fufu, how bold of you~ Fine, since I am bored of my paperwork~",
+  DM_OFF: "Heh, no more direct messages for you~"
 }
 
 // ====== EMBED MESSAGES ======
@@ -74,32 +74,32 @@ const SHORT_MSG = {
 function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const SHORT_BREAK_MSG = {
     color: "#f00",
-    title: "Short break starting",
-    description: `You have worked for ${
+    title: "Time for a short break",
+    description: `We have worked for ${
       par1 / 60000
-    } minutes! Time for a small break of ${par2 / 60000} minutes!`,
+    } minutes~ Let's take a ${par2 / 60000} minute break. A cup of tea before my next meeting?`,
   };
 
   const LONG_BREAK_MSG = {
     color: "#f00",
-    title: "Long break starting",
-    description: `You have worked for ${
+    title: "Time for a long break",
+    description: `We have worked for ${
       par1 / 60000
-    } minutes! Time for a long break of ${par2 / 60000} minutes!`,
+    } minutes~ Ahhh... time for a long break for ${par2 / 60000} minutes! Now, where did my chest of Onikabutos go?`,
   };
 
   const WORK_RESUME_MSG = {
     color: "#f00",
-    title: "Resume work",
-    description: `Break of  ${par2 / 60000} min has ended! Back to work!`,
+    title: "Back to work",
+    description: `Ah.... our ${par2 / 60000} min break has ended... A pity. Unfortunately, this work is not going to do itself.`,
   };
 
   const POMO_START_MSG = {
     color: "#f00",
-    title: "Pomodoro Started",
-    description: `Work duration: ${par1 / 60000} min | Short break: ${
+    title: "Ah... another work day",
+    description: `Work duration: ${par1 / 60000} min\n Short break: ${
       par2 / 60000 
-    } min | Long break: ${par3 / 60000} min`,
+    } min\n Long break: ${par3 / 60000} min`,
     image: {
       url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?raw=1"
     },
@@ -110,8 +110,8 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
   const HELP_MSG = {
     color: "#f00",
-    title: "Commands",
-    description: "Here is the list of commands to use the bot!",
+    title: "Asking me for help?",
+    description: "Here are the commands I'm providing you~ Read it carefully~",
     fields: [
       {
         name: "Start the pomodoro with default values (25, 5, 15)",
@@ -168,25 +168,25 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
   const POMO_MAX = {
     color: "#f00",
-    title: "Maximum pomodoro cycles reached",
-    description: "Take a break!",
+    title: "Maximum pomodoro cycles reached - Start a new pomodoro",
+    description: "Fufu... trying to work longer hours than me?",
   };
 
   const POMO_STOP_MSG = {
     color: "#f00",
-    title: "Pomodoro session ended! Here's a summary:",
-    description: `Time elapsed: ${par1} min | Total completed work cycles: ${par2}`,
+    title: "Work hours are over~",
+    description: `We've worked for ${par1} min~\n Total completed work cycles: ${par2}\nHmm... time to see what Thoma is up to~`,
   };
 
   const POM_STATUS_TO_BREAK = {
     color: "#f00",
-    title: `${par1 + 1}min left to your break! Keep it up!`,
+    title: `${par1 + 1}min left to our break, no slacking off~`,
     // description: `Total cycles: ${par1} | Total work time: ${par2 * par3 / 60000} min`,
   }
 
   const POM_STATUS_TO_WORK = {
     color: "#f00",
-    title: `${par1 + 1}min left to start working!`
+    title: `${par1 + 1}min left before work time again~`
   }
 
   var msgBase;
