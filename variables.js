@@ -75,32 +75,32 @@ const SHORT_MSG = {
 function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const SHORT_BREAK_MSG = {
     color: "#f00",
-    title: "Time for a short break",
+    title: "Time for a Short Break",
     description: `We have worked for ${
       par1 / 60000
-    } minutes~ Let's take a ${par2 / 60000} minute break. A cup of tea before my next meeting?`,
+    } minutes~ Let's take a ${par2 / 60000} minute break.`,
   };
 
   const LONG_BREAK_MSG = {
     color: "#f00",
-    title: "Time for a long break",
+    title: "Time for a Long Break",
     description: `We have worked for ${
       par1 / 60000
-    } minutes~ Ahhh... time for a long break for ${par2 / 60000} minutes! Now, where did my chest of Onikabutos go?`,
+    } minutes~ Time for a long break for ${par2 / 60000} minutes! Now, where did my chest of Onikabutos go?`,
   };
 
   const WORK_RESUME_MSG = {
     color: "#f00",
-    title: "Back to work",
-    description: `Our ${par2 / 60000} minute break has ended... A pity. Unfortunately, this work is not going to do itself.`,
+    title: "Back to Work",
+    description: `Our ${par2 / 60000} minute break has ended... A pity. Unfortunately, these documents are not going to do themselves.`,
   };
 
   const POMO_START_MSG = {
     color: "#f00",
-    title: "Ah... another work day",
-    description: `Work duration: ${par1 / 60000} minutes\n Short break: ${
+    title: "Ah... Another Work Day",
+    description: `Work duration: ${par1 / 60000} minutes\nShort break: ${
       par2 / 60000 
-    } minutes\n Long break: ${par3 / 60000} minutes`,
+    } minutes\nLong break: ${par3 / 60000} minutes`,
 //     image: {
 //       url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?raw=1"
 //     },
@@ -111,7 +111,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
   const HELP_MSG = {
     color: "#f00",
-    title: "Asking me for help?",
+    title: "Asking Me for Help?",
     description: "Here are the commands I'm providing you~ Read it carefully~",
     fields: [
       {
@@ -175,8 +175,8 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
   const POMO_STOP_MSG = {
     color: "#f00",
-    title: "Work hours are over~",
-    description: `We've worked for: ${par1} minutes\n Total completed work cycles: ${par2}\nHmm... time to see what Thoma is up to~`,
+    title: "Work Hours Are Over~",
+    description: `We've worked for: ${par1} minutes\nTotal completed work cycles: ${par2}\nHmm... time to see what Thoma is up to~`,
     image: {
       url: "https://www.dropbox.com/s/7dzdv8m8dcm361d/kamisato-namecard.png?raw=1"
     },
@@ -189,7 +189,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
   const POM_STATUS_TO_WORK = {
     color: "#f00",
-    description: `${par1 + 1} minutes left before work time again~`
+    description: `${par1 + 1} minutes left before it's back to work~`
   }
 
   var msgBase;
