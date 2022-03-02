@@ -176,7 +176,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const POMO_STOP_MSG = {
     color: "#f00",
     title: "Work Hours Are Over~",
-    description: `We've worked for: ${par1} minutes\nTotal completed work cycles: ${par2}\nHmm... time to see what Thoma is up to~`,
+    description: `We've worked for: ${par1} minutes\nTotal completed work cycles: ${par2}\nAll done!`,
     image: {
       url: "https://www.dropbox.com/s/7dzdv8m8dcm361d/kamisato-namecard.png?raw=1"
     },
