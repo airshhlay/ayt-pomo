@@ -92,7 +92,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const WORK_RESUME_MSG = {
     color: "#f00",
     title: "Back to Work",
-    description: `Our ${par2 / 60000} minute break has ended... A pity. Unfortunately, these documents are not going to do themselves.`,
+    description: `Our ${par2 / 60000} minute break has ended... A pity. But work doesn't do itself.`,
   };
 
   const POMO_START_MSG = {
