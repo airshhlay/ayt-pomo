@@ -178,7 +178,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     title: "Work Hours Are Over~",
     description: `We've worked for: ${par1} minutes\nTotal completed work cycles: ${par2}\nAll done!`,
     image: {
-      url: "https://www.dropbox.com/s/7dzdv8m8dcm361d/kamisato-namecard.png?raw=1"
+      url: "https://www.dropbox.com/s/64mjsvt708x9uyw/8E151E68-B67D-45F0-A8EA-F8A4997B8AB2.jpeg?raw=1"
     },
   };
 
