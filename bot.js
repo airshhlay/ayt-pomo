@@ -215,7 +215,7 @@ if (process.env.SH_TOKEN == "" || process.env.SH_TOKEN == undefined) {
 
 client.on("ready", () => {
   console.log("❤");
-  client.use.setActivity("ayt!help");
+  client.user.setActivity("ayt!help");
 });
 
 let container = new Container();
