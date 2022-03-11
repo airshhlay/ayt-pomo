@@ -1,5 +1,6 @@
 const {
   joinVoiceChannel,
+  getVoiceConnection,
   createAudioPlayer,
   createAudioResource,
   entersState,
@@ -25,7 +26,6 @@ class PlayerWrapper {
     try {
       await entersState(connection, VoiceConnectionStatus.Ready, 30e3);
       console.log("Voice connection ready")
-      connection.subscribe(this.player)
       return connection;
     } catch (error) {
       connection.destroy();
@@ -33,12 +33,14 @@ class PlayerWrapper {
     }
   }
 
-  playSong(name) {
+  playSong(name, id) {
     if (AUDIO[name]) {
+      let connection = getVoiceConnection(id);
+      let subscription = connection.subscribe(this.player);
       let resource = createAudioResource(AUDIO[name], {
         inputType: StreamType.Arbitrary
       })
-      if (resource) {
+      if (resource && subscription) {
         console.log(`playing audio resource: ${name}`)
         this.player.play(resource);
         return entersState(this.player, AudioPlayerStatus.Playing, 5e3);

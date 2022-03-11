@@ -12,6 +12,7 @@ if (process.env.LOCAL_TEST) {
     volume: "bot!volume",
     help: "bot!help",
     clear: "bot!clear",
+    mute: "bot!quiet",
   };
 } else {
   COMMANDS = {
@@ -21,10 +22,30 @@ if (process.env.LOCAL_TEST) {
     status: "ayt!status",
     dm: "ayt!dm",
     toggletext: "ayt!togtext",
-    volume: "ayt!volume",
+    // volume: "ayt!volume",
+    mute: "ayt!quiet",
     help: "ayt!help",
     clear: "ayt!clear",
   };
+}
+
+/**
+ * Return a random element from an array that is
+ * different than `last` (as long as the array has > 1 items). 
+ * Return null if the array is empty.
+*/
+function getRandomDifferent(arr, last = undefined) {
+  if (arr.length === 0) {
+    return null;
+  } else if (arr.length === 1) {
+    return arr[0];
+  } else {
+    let num = 0;
+    do {
+      num = Math.floor(Math.random() * arr.length);
+    } while (arr[num] === last);
+    return arr[num];
+  }
 }
 
 // ====== BREAK FREQUENCY ======
@@ -45,7 +66,7 @@ const AUDIO = {
 
 // ====== ERROR MESSAGES ======
 const ERRORS = {
-  INVALID_TIME: "I need a valid time between 5 and 120 minutes.",
+  INVALID_TIME: "I need a valid time between 5 and 120 min.",
   ALR_EXISTS: "We're already working, we should finish that one up first.",
   VOICE_CHANNEL_ERR: "I can't join your voice channel... hmmm... you.. did not give me permission?",
   NOT_IN_VOICE_CHANNEL_JOIN:
@@ -56,6 +77,8 @@ const ERRORS = {
     "Pfft, you can't disable text in a text-only pomodoro...",
   CHANGE_VOLUME_IN_TEXTONLY:
     "Pfft, you can't change the volume in a text-only pomodoro...",
+  QUIET_BOT_WHEN_NO_TEXTALERTS: "Text notifications are already off! You can't mute me at the same time.",
+  DISABLE_TEXT_BOT_MUTED: "I'm already muted, you can't disable my text notifications! At least one of them has to be enabled, you know.",
   INVALID_VOLUME: "Volumes can only be between 1 to 100~",
   NO_VOLUME_ARG: "Give me a concrete number so I can change the volume~",
   DELETE_MSG_ERR:
@@ -64,10 +87,12 @@ const ERRORS = {
 
 // ====== NORMAL MESSAGES ======
 const SHORT_MSG = {
-  TEXT_NOTIF_OFF: "Alright, I will send you text notifications~",
-  TEXT_NOTIF_ON: "I will stop sending text notifications~",
+  TEXT_NOTIF_ON: "Alright, I will send you text notifications~",
+  TEXT_NOTIF_OFF: "I will stop sending text notifications~",
   DM_ON: "You want me to message you directly instead? Fufu, how bold of you~",
-  DM_OFF: "Heh, no more direct messages for you~"
+  DM_OFF: "Heh, no more direct messages for you~",
+  MUTE: "Alright, quiet time~",
+  UNMUTE: "Sure, I will play an alert when it's time"
 }
 
 // ====== EMBED MESSAGES ======
@@ -78,7 +103,12 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     title: "Time for a Short Break",
     description: `We have worked for ${
       par1 / 60000
-    } minutes~ Let's take a ${par2 / 60000} minute break.`,
+    } min~ Let's take a ${par2 / 60000} minute break.`,
+    /*
+    thumbnail: {
+      // TODO: change image to cute ayato chibi
+      url: "https://www.dropbox.com/s/oqacjxt7itpozen/ayato-boba.gif?raw=1"
+    } */
   };
 
   const LONG_BREAK_MSG = {
@@ -86,27 +116,30 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     title: "Time for a Long Break",
     description: `We have worked for ${
       par1 / 60000
-    } minutes~ Time for a long break for ${par2 / 60000} minutes! Now, where did my chest of Onikabutos go?`,
+    } min~ Time for a long break for ${par2 / 60000} min! Hmm... did you see my chest of Onikabutos?`,
+    /*
+    thumbnail: {
+      // TODO: change image to cute ayato chibi
+      url: "https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1"
+    } */
   };
 
   const WORK_RESUME_MSG = {
     color: "#f00",
     title: "Back to Work",
-    description: `Our ${par2 / 60000} minute break has ended... Let's get back to work.`,
+    description: `Our ${par2 / 60000} minute break has ended!`,
+    footer: {
+      text: "When, I wonder, did you come under the illusion that your tasks could complete themselves?"
+    }
   };
 
+  // TODO: add image
   const POMO_START_MSG = {
     color: "#f00",
     title: "Ah... Another Work Day",
-    description: `Work duration: ${par1 / 60000} minutes\nShort break: ${
+    description: `Work duration: ${par1 / 60000} min\nShort break: ${
       par2 / 60000 
-    } minutes\nLong break: ${par3 / 60000} minutes`,
-//     image: {
-//       url: "https://www.dropbox.com/s/tgbhocgiut824iz/test-gif.gif?raw=1"
-//     },
-//     thumbnail: {
-//       url: "https://www.dropbox.com/s/ipjarlqc3un89td/test-img.jpg?raw=1"
-//     }
+    } min\nLong break: ${par3 / 60000} min`
   };
 
   const HELP_MSG = {
@@ -126,12 +159,12 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
       },
       {
         name: "Start the pomodoro with specific values",
-        value: "ayt!start [work time] [small break time] [big break time]",
+        value: "ayt!start [work time] [short break time] [long break time]",
         isInline: true,
       },
       {
         name: "Start a text-only pomodoro with specific values",
-        value: "ayt!tostart [work time] [small break time] [big break time]",
+        value: "ayt!tostart [work time] [short break time] [long break time]",
         isInline: true,
       },
       {
@@ -145,18 +178,18 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
         isInline: true,
       },
       {
-        name: "Toggle the notifications via direct message",
+        name: "Toggle direct message notifications",
         value: "ayt!dm",
         isInline: true,
       },
       {
-        name: "Toggle the channel text notifications",
+        name: "Toggle sending of channel notifications",
         value: "ayt!togtext",
         isInline: true,
       },
       {
-        name: "Change the volume of the alerts, defaults to 50",
-        value: "ayt!volume volume",
+        name: "Toggle playing of song in voice channel",
+        value: "ayt!quiet",
         isInline: true,
       },
       {
@@ -176,21 +209,20 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const POMO_STOP_MSG = {
     color: "#f00",
     title: "Work Hours Are Over~",
-    description: `We've worked for: ${par1} minutes\nTotal completed work cycles: ${par2}\nAll done!`,
+    description: `We've worked for: ${par1} min\nTotal completed work cycles: ${par2}\nHope you were productive~`,
     image: {
-      // url: "https://www.dropbox.com/s/64mjsvt708x9uyw/8E151E68-B67D-45F0-A8EA-F8A4997B8AB2.jpeg?raw=1"
       url: "https://www.dropbox.com/s/y0mi6m26prgv2ha/FMIzH2aVUAIUm57.jpeg?raw=1"
     },
   };
 
   const POM_STATUS_TO_BREAK = {
     color: "#f00",
-    description: `${par1 + 1} minutes left to our break, no slacking off~`
+    description: `${par1 + 1} min left to our break, no slacking off~`
   }
 
   const POM_STATUS_TO_WORK = {
     color: "#f00",
-    description: `${par1 + 1} minutes left before it's back to work~`
+    description: `${par1 + 1} min left before it's back to work~`
   }
 
   var msgBase;
@@ -226,7 +258,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
 
   // add in common thumbnail
-  if (!msgBase.thumbnail && USE_COMMON_THUMBNAIL) {
+  if (USE_COMMON_THUMBNAIL && !msgBase.thumbnail) {
     msgBase.thumbnail = COMMON_THUMBNAIL;
   }
   return msgBase;
