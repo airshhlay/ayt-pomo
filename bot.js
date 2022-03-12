@@ -156,7 +156,7 @@ class Pomodoro {
     var summaryMsg = createEmbedMsg("stop", timeElapsed, this.workCount)
     this.sendRelevantAlerts(true, summaryMsg)
     clearTimeout(this.timer);
-    if (!this.textOnly) {
+    if (!this.textOnly && this.connection) {
       this.connection.destroy();
     }
   }
@@ -389,13 +389,6 @@ client.on("messageCreate", async (message) => {
     if (pomodoroStop.length == 0) {
       message.reply(ERRORS.NO_POMO);
       return;
-    }
-
-    if (!pomodoroStop[0].textOnly) {
-      if (!message.member.voice.channel) {
-        message.reply(ERRORS.NOT_IN_POMO);
-        return;
-      }
     }
 
     pomodoroStop[0].stopTimer();

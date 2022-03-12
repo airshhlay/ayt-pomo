@@ -57,6 +57,7 @@ const COMMON_THUMBNAIL = {
 //   url: "https://www.dropbox.com/s/c4pjyfx0cf03058/kamisato-namecard-ayato.png?raw=1"
 };
 const USE_COMMON_THUMBNAIL = false;
+const ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/FMIzH2aVUAIUm57.jpeg?raw=1"];
 
 // ====== AUDIO ======
 const AUDIO = {
@@ -71,7 +72,7 @@ const ERRORS = {
   VOICE_CHANNEL_ERR: "I can't join your voice channel... hmmm... you.. did not give me permission?",
   NOT_IN_VOICE_CHANNEL_JOIN:
     "Fufu... you missed a step - join a voice channel first.",
-  NOT_IN_POMO: "Hmm... you're not part of my voice channel. Heh, thought you could fool me? Join the one I'm in before trying any commands.",
+  NOT_IN_POMO: "Hmm... you're not part of my voice channel. Join the one I'm in before trying any commands.",
   NO_POMO: "I haven't started work, but you're giving me this command? Pfft. Interesting.",
   DISABLE_TEXT_IN_TEXTONLY:
     "Pfft, you can't disable text in a text-only pomodoro...",
@@ -145,7 +146,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const HELP_MSG = {
     color: "#f00",
     title: "Asking Me for Help?",
-    description: "Here are the commands I'm providing you~ Read it carefully~",
+    description: "Here are the commands I'm providing you~ Read it carefully^^",
     fields: [
       {
         name: "Start the pomodoro with default values (25, 5, 15)",
@@ -206,12 +207,13 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     description: "Fufu... trying to work longer hours than me?",
   };
 
+  let endingImage = getRandomDifferent(ENDING_IMAGES);
   const POMO_STOP_MSG = {
     color: "#f00",
     title: "Work Hours Are Over~",
-    description: `We've worked for: ${par1} min\nTotal completed work cycles: ${par2}\nHope you were productive~`,
+    description: `We've worked for: ${par1} min\nTotal completed work cycles: ${par2}\nHope you were productive^^`,
     image: {
-      url: "https://www.dropbox.com/s/y0mi6m26prgv2ha/FMIzH2aVUAIUm57.jpeg?raw=1"
+      url: endingImage
     },
   };
 
