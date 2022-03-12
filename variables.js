@@ -58,6 +58,7 @@ const COMMON_THUMBNAIL = {
 };
 const USE_COMMON_THUMBNAIL = false;
 const ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/FMIzH2aVUAIUm57.jpeg?raw=1"];
+const BREAK_IMAGES = ["https://www.dropbox.com/s/oqacjxt7itpozen/ayato-boba.gif?raw=1", "https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1"];
 
 // ====== AUDIO ======
 const AUDIO = {
@@ -99,17 +100,18 @@ const SHORT_MSG = {
 // ====== EMBED MESSAGES ======
 // (includes images, background color, formatting etc.)
 function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
+
+  let thumbnail = getRandomDifferent(BREAK_IMAGES)
   const SHORT_BREAK_MSG = {
     color: "#f00",
     title: "Time for a Short Break",
     description: `We have worked for ${
       par1 / 60000
     } min~ Let's take a ${par2 / 60000} minute break.`,
-    /*
     thumbnail: {
       // TODO: change image to cute ayato chibi
-      url: "https://www.dropbox.com/s/oqacjxt7itpozen/ayato-boba.gif?raw=1"
-    } */
+      url: thumbnail
+    }
   };
 
   const LONG_BREAK_MSG = {
@@ -118,11 +120,10 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     description: `We have worked for ${
       par1 / 60000
     } min~ Time for a long break for ${par2 / 60000} min! Hmm... did you see my chest of Onikabutos?`,
-    /*
     thumbnail: {
       // TODO: change image to cute ayato chibi
-      url: "https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1"
-    } */
+      url: thumbnail
+    }
   };
 
   const WORK_RESUME_MSG = {
