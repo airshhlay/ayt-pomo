@@ -130,10 +130,11 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const WORK_RESUME_MSG = {
     color: "#f00",
     title: "Back to Work",
-    description: `Our ${par2 / 60000} minute break has ended!`,
+    description: `Our ${par2 / 60000} minute break has ended... Let's get back to it.`,
+    /*
     footer: {
       text: "When, I wonder, did you come under the illusion that your tasks could complete themselves?"
-    }
+    } */
   };
 
   let startImage = getRandomDifferent(START_IMAGES);
