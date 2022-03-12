@@ -70,6 +70,7 @@ const AUDIO = {
 // ====== ERROR MESSAGES ======
 const ERRORS = {
   INVALID_TIME: "I need a valid time between 5 and 120 min.",
+  INSUFFICIENT_ARGS: "You have to give me the [work time] [short break time] [long break time] options, or just use the default command without options.",
   ALR_EXISTS: "We're already working, we should finish that one up first.",
   VOICE_CHANNEL_ERR: "I can't join your voice channel... hmmm... you.. did not give me permission?",
   NOT_IN_VOICE_CHANNEL_JOIN:

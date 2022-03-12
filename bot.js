@@ -233,34 +233,37 @@ let container = new Container();
 
 // parameter parsing
 function checkParams(arg1, arg2, arg3, message) {
+  if (!(arg1 && arg2 && arg3) && (arg1 || arg2 || arg3)) {
+    message.channel.send(ERRORS.INSUFFICIENT_ARGS)
+    return false
+  }
+
   if (process.env.LOCAL_TEST) {
     return true;
   }
 
-  let checked = true;
-
   if (arg1) {
     if (parseInt(arg1) < 5 || parseInt(arg1) > 120 || isNaN(parseInt(arg1))) {
       message.channel.send(ERRORS.INVALID_TIME);
-      checked = false;
+      return false;
     }
   }
 
   if (arg2) {
     if (parseInt(arg2) < 5 || parseInt(arg2) > 120 || isNaN(parseInt(arg2))) {
       message.channel.send(ERRORS.INVALID_TIME);
-      checked = false;
+      return false;
     }
   }
 
   if (arg3) {
     if (parseInt(arg3) < 5 || parseInt(arg3) > 120 || isNaN(parseInt(arg3))) {
       message.channel.send(ERRORS.INVALID_TIME);
-      checked = false;
+      return false;
     }
   }
 
-  return checked;
+  return true;
 }
 
 setInterval(() => {}, 600000);
