@@ -63,8 +63,8 @@ const START_IMAGES = ["https://www.dropbox.com/s/88teobklvhzigly/kamisato-estate
 
 // ====== AUDIO ======
 const AUDIO = {
-  break: "https://www.dropbox.com/s/dbsn4hz2hogl3wq/break-thoma-theme.mp3?raw=1",
-  work: "https://www.dropbox.com/s/6x97u0j634ljz73/work-thoma-theme.mp3?raw=1"
+  break: "https://www.dropbox.com/s/9b9jhyu2g0q8rbm/lana-notif-sound.mp3?raw=1",
+  work: "https://www.dropbox.com/s/9b9jhyu2g0q8rbm/lana-notif-sound.mp3?raw=1"
 }
 
 // ====== ERROR MESSAGES ======
