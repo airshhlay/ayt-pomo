@@ -59,6 +59,7 @@ const COMMON_THUMBNAIL = {
 const USE_COMMON_THUMBNAIL = false;
 const ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/FMIzH2aVUAIUm57.jpeg?raw=1"];
 const BREAK_IMAGES = ["https://www.dropbox.com/s/oqacjxt7itpozen/ayato-boba.gif?raw=1", "https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1"];
+const START_IMAGES = ["https://www.dropbox.com/s/88teobklvhzigly/kamisato-estate.jpg?raw=1"];
 
 // ====== AUDIO ======
 const AUDIO = {
@@ -135,14 +136,37 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     }
   };
 
-  // TODO: add image
+  let startImage = getRandomDifferent(START_IMAGES);
   const POMO_START_MSG = {
     color: "#f00",
     title: "Ah... Another Work Day",
     description: `Work duration: ${par1 / 60000} min\nShort break: ${
       par2 / 60000 
-    } min\nLong break: ${par3 / 60000} min`
+    } min\nLong break: ${par3 / 60000} min`,
+    image: {
+      url: startImage
+    }
   };
+
+  let endingImage = getRandomDifferent(ENDING_IMAGES);
+  const POMO_STOP_MSG = {
+    color: "#f00",
+    title: "Work Hours Are Over~",
+    description: `We've worked for: ${par1} min\nTotal completed work cycles: ${par2}\nHope you were productive^^`,
+    image: {
+      url: endingImage
+    },
+  };
+
+  const POM_STATUS_TO_BREAK = {
+    color: "#f00",
+    description: `${par1 + 1} min left to our break, no slacking off~`
+  }
+
+  const POM_STATUS_TO_WORK = {
+    color: "#f00",
+    description: `${par1 + 1} min left before it's back to work~`
+  }
 
   const HELP_MSG = {
     color: "#f00",
@@ -207,27 +231,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     title: "Maximum pomodoro cycles reached - Start a new pomodoro",
     description: "Fufu... trying to work longer hours than me?",
   };
-
-  let endingImage = getRandomDifferent(ENDING_IMAGES);
-  const POMO_STOP_MSG = {
-    color: "#f00",
-    title: "Work Hours Are Over~",
-    description: `We've worked for: ${par1} min\nTotal completed work cycles: ${par2}\nHope you were productive^^`,
-    image: {
-      url: endingImage
-    },
-  };
-
-  const POM_STATUS_TO_BREAK = {
-    color: "#f00",
-    description: `${par1 + 1} min left to our break, no slacking off~`
-  }
-
-  const POM_STATUS_TO_WORK = {
-    color: "#f00",
-    description: `${par1 + 1} min left before it's back to work~`
-  }
-
+ 
   var msgBase;
   switch (type) {
     case "stop":
