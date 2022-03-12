@@ -108,7 +108,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     title: "Time for a Short Break",
     description: `We have worked for ${
       par1 / 60000
-    } min~ Let's take a ${par2 / 60000} minute break.`,
+    } min~ Let's take a ${par2 / 60000} min break.`,
     thumbnail: {
       // TODO: change image to cute ayato chibi
       url: thumbnail
@@ -130,7 +130,7 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   const WORK_RESUME_MSG = {
     color: "#f00",
     title: "Back to Work",
-    description: `Our ${par2 / 60000} minute break has ended... Let's get back to it.`,
+    description: `Our ${par2 / 60000} min break has ended... Let's get back to it.`,
     /*
     footer: {
       text: "When, I wonder, did you come under the illusion that your tasks could complete themselves?"
