@@ -13,6 +13,7 @@ if (process.env.LOCAL_TEST) {
     help: "bot!help",
     clear: "bot!clear",
     mute: "bot!quiet",
+    lofi: "bot!lofi"
   };
 } else {
   COMMANDS = {
@@ -26,6 +27,7 @@ if (process.env.LOCAL_TEST) {
     mute: "ayt!quiet",
     help: "ayt!help",
     clear: "ayt!clear",
+    lofi: "ayt!lofi"
   };
 }
 
@@ -63,8 +65,9 @@ const START_IMAGES = ["https://www.dropbox.com/s/88teobklvhzigly/kamisato-estate
 
 // ====== AUDIO ======
 const AUDIO = {
-  break: "https://www.dropbox.com/s/dbsn4hz2hogl3wq/break-thoma-theme.mp3?raw=1",
-  work: "https://www.dropbox.com/s/6x97u0j634ljz73/work-thoma-theme.mp3?raw=1"
+  break: "https://www.dropbox.com/s/9b9jhyu2g0q8rbm/lana-notif-sound.mp3?raw=1",
+  work: "https://www.dropbox.com/s/9b9jhyu2g0q8rbm/lana-notif-sound.mp3?raw=1",
+  lofi: "https://www.youtube.com/watch?v=n61ULEU7CO0"
 }
 
 // ====== ERROR MESSAGES ======
@@ -96,7 +99,9 @@ const SHORT_MSG = {
   DM_ON: "You want me to message you directly instead? Fufu, how bold of you~",
   DM_OFF: "Heh, no more direct messages for you~",
   MUTE: "Alright, quiet time~",
-  UNMUTE: "Sure, I will play an alert when it's time"
+  UNMUTE: "Sure, I will play an alert when it's time",
+  START_LOFI: "You work with music? Let's do that.",
+  STOP_LOFI: "Keeping quiet^^"
 }
 
 // ====== EMBED MESSAGES ======

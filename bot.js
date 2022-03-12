@@ -8,17 +8,18 @@ const {
   LASTWORK_TIME,
   BIGBREAK_TIME,
   createEmbedMsg
-} = require("./variables")
+} = require("./variables");
+const { joinVoiceChannel } = require("@discordjs/voice");
 
 // audio configuration
-const playerW = new PlayerWrapper()
+// const playerW = new PlayerWrapper()
 
 class Pomodoro {
   constructor(
     workTime,
     smallBreak,
     bigBreak,
-    connection,
+    // connection,
     id,
     message,
     textOnly
@@ -30,7 +31,6 @@ class Pomodoro {
     this.peopleToDm = [];
     this.textAlerts = true;
     this.volume = 0.5;
-    this.connection = connection;
     this.message = message;
     this.time = 1;
     this.pomoCreatedTime = new Date();
@@ -41,8 +41,12 @@ class Pomodoro {
     this.textOnly = textOnly;
     this.audio = ""
     this.muted = false;
-
+    this.playingLofi = false;
     this.workCount = 0
+
+    if (!this.textOnly) {
+      this.joinVoiceChannel(message);
+    }
 
     var pomoStartMsg = createEmbedMsg("start", this.workTime, this.smallBreak, this.bigBreak)
     this.message.channel.send(
@@ -51,6 +55,11 @@ class Pomodoro {
 
 
     this.startANewCycle();
+  }
+
+  async joinVoiceChannel(message) {
+    this.playerW = new PlayerWrapper();
+    this.connection = await this.playerW.connectToChannel(message)
   }
 
   sendRelevantAlerts(embed, message) {
@@ -64,7 +73,7 @@ class Pomodoro {
       }
 
       if (!this.textOnly && this.connection && !this.muted) {
-        playerW.playSong(this.audio, this.id);
+        this.playerW.playSong(this.audio);
       }
 
       //Send DM Alerts
@@ -100,7 +109,7 @@ class Pomodoro {
           {embed: [maxReachedMsg]}
         );
 
-        if (!this.textOnly) {
+        if (!this.textOnly && this.connection) {
           this.connection.destroy();
         }
 
@@ -192,6 +201,17 @@ class Pomodoro {
       message.channel.send(SHORT_MSG.MUTE);
     } else {
       message.channel.send(SHORT_MSG.UNMUTE);
+    }
+  }
+
+  toggleLofi(message) {
+    this.playingLofi = !this.playingLofi
+    if (this.playingLofi && !this.muted) {
+      this.playerW.playLofi();
+      message.channel.send(SHORT_MSG.START_LOFI);
+    } else {
+      this.playerW.stopLofi();
+      message.channel.send(SHORT_MSG.STOP_LOFI);
     }
   }
 }
@@ -345,13 +365,13 @@ client.on("messageCreate", async (message) => {
       try {
         if (args[1] && args[2] && args[3]) {
           // with specified timings
-          var channel = await playerW.connectToChannel(message)
+          // var channel = await playerW.connectToChannel(message)
           container.addPomodoro(
             new Pomodoro(
               parseInt(args[1] * 60000),
               parseInt(args[2] * 60000),
               parseInt(args[3] * 60000),
-              channel,
+              // channel,
               message.guild.id,
               message,
               false
@@ -359,13 +379,13 @@ client.on("messageCreate", async (message) => {
           );
         } else {
           // default timings
-          var channel = await playerW.connectToChannel(message)
+          // var channel = await playerW.connectToChannel(message)
           container.addPomodoro(
             new Pomodoro(
               1500000,
               300000,
               900000,
-              channel,
+              // channel,
               message.guild.id,
               message,
               false
@@ -400,8 +420,6 @@ client.on("messageCreate", async (message) => {
 
     pomodoroStop[0].stopTimer();
     container.removePomodoro(message.guild.id);
-
-    // add pom stop message
   }
 
   if (args[0] == COMMANDS.status) {
@@ -551,6 +569,39 @@ client.on("messageCreate", async (message) => {
     }
 
     pomodoro[0].toggleMute(message);
+  }
+
+  if (args[0] == COMMANDS.lofi) {
+    let pomodoro = container.pomodoros.filter(
+      (pomodoro) => pomodoro.id == message.guild.id
+    );
+
+    if (pomodoro.length == 0) {
+      message.reply(ERRORS.NO_POMO);
+      return;
+    }
+
+    if (pomodoro[0].textOnly) {
+      message.reply(ERRORS.CHANGE_VOLUME_IN_TEXTONLY);
+      return;
+    }
+
+    if (pomodoro.length == 0) {
+      message.reply(ERRORS.NO_POMO);
+      return;
+    }
+
+    if (!message.member.voice.channel) {
+      message.reply(ERRORS.NOT_IN_POMO);
+      return;
+    }
+
+    if (!pomodoro[0].textAlerts) {
+      message.reply(ERRORS.QUIET_BOT_WHEN_NO_TEXTALERTS);
+      return;
+    }
+
+    pomodoro[0].toggleLofi(message);
   }
 
   if (args[0] == COMMANDS.clear) {
