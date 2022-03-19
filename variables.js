@@ -57,8 +57,8 @@ const COMMON_THUMBNAIL = {
 //   url: "https://www.dropbox.com/s/c4pjyfx0cf03058/kamisato-namecard-ayato.png?raw=1"
 };
 const USE_COMMON_THUMBNAIL = false;
-const ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/FMIzH2aVUAIUm57.jpeg?raw=1"];
-const BREAK_IMAGES = ["https://www.dropbox.com/s/oqacjxt7itpozen/ayato-boba.gif?raw=1", "https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1"];
+const ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/ayato-asdfghhjk-sir.jpeg?raw=1", "https://www.dropbox.com/s/glqj50dr7py31se/ayato-hottie-schmottie.jpeg?raw=1", "https://www.dropbox.com/s/8cr20cl4w8hjefe/sir-u-r-so-pretty.jpeg?raw=1"];
+const BREAK_IMAGES = ["https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1", "https://www.dropbox.com/s/x2pzik6bbjimbm6/chibi-yato-yay.png?raw=1", "https://www.dropbox.com/s/x2pzik6bbjimbm6/chibi-yato-yay.png?raw=1", "https://www.dropbox.com/s/vekkxt7bi6zaoro/potato-chibi-yato.jpeg?raw=1"];
 const START_IMAGES = ["https://www.dropbox.com/s/88teobklvhzigly/kamisato-estate.jpg?raw=1"];
 
 // ====== AUDIO ======
