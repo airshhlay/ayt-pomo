@@ -38,13 +38,13 @@ function getRandomDifferent(arr, last = undefined) {
   if (arr.length === 0) {
     return null;
   } else if (arr.length === 1) {
-    return arr[0];
+    return [0, arr[0]];
   } else {
     let num = 0;
     do {
       num = Math.floor(Math.random() * arr.length);
     } while (arr[num] === last);
-    return arr[num];
+    return [num, arr[num]];
   }
 }
 
@@ -60,6 +60,10 @@ const USE_COMMON_THUMBNAIL = false;
 const ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/ayato-asdfghhjk-sir.jpeg?raw=1", "https://www.dropbox.com/s/glqj50dr7py31se/ayato-hottie-schmottie.jpeg?raw=1", "https://www.dropbox.com/s/8cr20cl4w8hjefe/sir-u-r-so-pretty.jpeg?raw=1"];
 const BREAK_IMAGES = ["https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1", "https://www.dropbox.com/s/x2pzik6bbjimbm6/chibi-yato-yay.png?raw=1", "https://www.dropbox.com/s/x2pzik6bbjimbm6/chibi-yato-yay.png?raw=1", "https://www.dropbox.com/s/vekkxt7bi6zaoro/potato-chibi-yato.jpeg?raw=1"];
 const START_IMAGES = ["https://www.dropbox.com/s/88teobklvhzigly/kamisato-estate.jpg?raw=1"];
+
+var lastEndingIndex;
+var lastBreakIndex;
+var lastStartIndex;
 
 // ====== AUDIO ======
 const AUDIO = {
@@ -103,7 +107,9 @@ const SHORT_MSG = {
 // (includes images, background color, formatting etc.)
 function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
 
-  let thumbnail = getRandomDifferent(BREAK_IMAGES)
+  let randomThumbnail = getRandomDifferent(BREAK_IMAGES, lastBreakIndex);
+  lastBreakIndex = randomThumbnail[0];
+  let thumbnail = randomThumbnail[1];
   const SHORT_BREAK_MSG = {
     color: "#f00",
     title: "Time for a Short Break",
@@ -138,7 +144,9 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     } */
   };
 
-  let startImage = getRandomDifferent(START_IMAGES);
+  let randomStart = getRandomDifferent(START_IMAGES, lastStartIndex);
+  lastStartIndex = randomStart[0];
+  let startImage = randomStart[1];
   const POMO_START_MSG = {
     color: "#f00",
     title: "Ah... Another Work Day",
@@ -150,7 +158,9 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     }
   };
 
-  let endingImage = getRandomDifferent(ENDING_IMAGES);
+  let randomEnd = getRandomDifferent(ENDING_IMAGES, lastEndingIndex)
+  lastEndingIndex = randomEnd[0];
+  let endingImage = randomEnd[1];
   const POMO_STOP_MSG = {
     color: "#f00",
     title: "Work Hours Are Over~",
