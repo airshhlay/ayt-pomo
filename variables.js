@@ -68,7 +68,7 @@ const LASTWORK_TIME = [7, 15, 23];
 const BIGBREAK_TIME = [8, 16, 24];
 
 // ====== IMAGES ======
-var ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/ayato-asdfghhjk-sir.jpeg?raw=1", "https://www.dropbox.com/s/glqj50dr7py31se/ayato-hottie-schmottie.jpeg?raw=1", "https://www.dropbox.com/s/8cr20cl4w8hjefe/sir-u-r-so-pretty.jpeg?raw=1", "https://www.dropbox.com/s/lx851py1j1imemu/wo-de-lao-po.gif?raw=1"];
+var ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/ayato-asdfghhjk-sir.jpeg?raw=1", "https://www.dropbox.com/s/8vdv5ffovw09x8t/HOT.jpg?raw=1", "https://www.dropbox.com/s/8cr20cl4w8hjefe/sir-u-r-so-pretty.jpeg?raw=1", "https://www.dropbox.com/s/lx851py1j1imemu/wo-de-lao-po.gif?raw=1"];
 var BREAK_IMAGES = ["https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1", "https://www.dropbox.com/s/x2pzik6bbjimbm6/chibi-yato-yay.png?raw=1", "https://www.dropbox.com/s/vekkxt7bi6zaoro/potato-chibi-yato.jpeg?raw=1", "https://www.dropbox.com/s/oqacjxt7itpozen/ayato-sus-bbt.gif?raw=1", "https://www.dropbox.com/s/nu0cq71o14mfw88/QT-WITH-BBT.jpeg?raw=1"];
 var START_IMAGES = ["https://www.dropbox.com/s/3nzr0ttf11boi5s/jia-zhu-da-ren-520.gif?raw=1"];
 var WORK_IMAGES = ["https://www.dropbox.com/s/pf12mfdlp3vs7tn/hardworking-king.jpg?raw=1"];
