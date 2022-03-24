@@ -48,22 +48,52 @@ function getRandomDifferent(arr, last = undefined) {
   }
 }
 
+function getItem(arr, index) {
+  if (arr.length == 1) {
+    return [0, arr[0]];
+  }
+  if (index >= arr.length) {
+    let wrapped = index % arr.length;
+    console.log("current index:  " + wrapped);
+    return [wrapped + 1, arr[wrapped]];
+  }
+  else {
+    console.log("current index:  " + (index));
+    return [index + 1, arr[index]];
+  }
+}
+
 // ====== BREAK FREQUENCY ======
 const LASTWORK_TIME = [7, 15, 23];
 const BIGBREAK_TIME = [8, 16, 24];
 
 // ====== IMAGES ======
-const COMMON_THUMBNAIL = {
-//   url: "https://www.dropbox.com/s/c4pjyfx0cf03058/kamisato-namecard-ayato.png?raw=1"
-};
-const USE_COMMON_THUMBNAIL = false;
-const ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/ayato-asdfghhjk-sir.jpeg?raw=1", "https://www.dropbox.com/s/glqj50dr7py31se/ayato-hottie-schmottie.jpeg?raw=1", "https://www.dropbox.com/s/8cr20cl4w8hjefe/sir-u-r-so-pretty.jpeg?raw=1", "https://www.dropbox.com/s/tjbo426tzkouw66/wife.JPG?raw=1", "https://twitter.com/gifgenshin/status/1506856619811827713?s=12"];
-const BREAK_IMAGES = ["https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1", "https://www.dropbox.com/s/x2pzik6bbjimbm6/chibi-yato-yay.png?raw=1", "https://www.dropbox.com/s/x2pzik6bbjimbm6/chibi-yato-yay.png?raw=1", "https://www.dropbox.com/s/vekkxt7bi6zaoro/potato-chibi-yato.jpeg?raw=1"];
-const START_IMAGES = ["https://www.dropbox.com/s/88teobklvhzigly/kamisato-estate.jpg?raw=1", "https://www.dropbox.com/s/3nzr0ttf11boi5s/jia-zhu-da-ren-520.gif?raw=1"];
+var ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/ayato-asdfghhjk-sir.jpeg?raw=1", "https://www.dropbox.com/s/glqj50dr7py31se/ayato-hottie-schmottie.jpeg?raw=1", "https://www.dropbox.com/s/8cr20cl4w8hjefe/sir-u-r-so-pretty.jpeg?raw=1", "https://www.dropbox.com/s/lx851py1j1imemu/wo-de-lao-po.gif?raw=1"];
+var BREAK_IMAGES = ["https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1", "https://www.dropbox.com/s/x2pzik6bbjimbm6/chibi-yato-yay.png?raw=1", "https://www.dropbox.com/s/vekkxt7bi6zaoro/potato-chibi-yato.jpeg?raw=1", "https://www.dropbox.com/s/oqacjxt7itpozen/ayato-sus-bbt.gif?raw=1", "https://www.dropbox.com/s/nu0cq71o14mfw88/QT-WITH-BBT.jpeg?raw=1"];
+var START_IMAGES = ["https://www.dropbox.com/s/3nzr0ttf11boi5s/jia-zhu-da-ren-520.gif?raw=1"];
+var WORK_IMAGES = ["https://www.dropbox.com/s/pf12mfdlp3vs7tn/hardworking-king.jpg?raw=1"];
 
-var lastEndingIndex;
-var lastBreakIndex;
-var lastStartIndex;
+function shuffleArray(array) {
+  return array
+  .map(value => ({ value, sort: Math.random() }))
+  .sort((a, b) => a.sort - b.sort)
+  .map(({ value }) => value)
+}
+
+var lastBreakIndex = 0;
+var lastWorkIndex = 0;
+var lastStartIndex = 0;
+var lastEndingIndex = 0;
+function resetAll() {
+  // ENDING_IMAGES = shuffleArray(ENDING_IMAGES);
+  BREAK_IMAGES = shuffleArray(BREAK_IMAGES);
+  // START_IMAGES = shuffleArray(START_IMAGES);
+  WORK_IMAGES = shuffleArray(WORK_IMAGES);
+  lastBreakIndex = 0;
+  lastWorkIndex = 0;
+}
+
+
 
 // ====== AUDIO ======
 const AUDIO = {
@@ -106,20 +136,12 @@ const SHORT_MSG = {
 // ====== EMBED MESSAGES ======
 // (includes images, background color, formatting etc.)
 function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
-
-  let randomThumbnail = getRandomDifferent(BREAK_IMAGES, lastBreakIndex);
-  lastBreakIndex = randomThumbnail[0];
-  let thumbnail = randomThumbnail[1];
   const SHORT_BREAK_MSG = {
     color: "#f00",
     title: "Time for a Short Break",
     description: `We have worked for ${
       par1 / 60000
-    } min~ Let's take a ${par2 / 60000} min break.`,
-    thumbnail: {
-      // TODO: change image to cute ayato chibi
-      url: thumbnail
-    }
+    } min~ Let's take a ${par2 / 60000} min break.`
   };
 
   const LONG_BREAK_MSG = {
@@ -127,47 +149,31 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
     title: "Time for a Long Break",
     description: `We have worked for ${
       par1 / 60000
-    } min~ Time for a long break for ${par2 / 60000} min! Hmm... did you see my chest of Onikabutos?`,
-    thumbnail: {
-      // TODO: change image to cute ayato chibi
-      url: thumbnail
+    } min~ Time for a long break for ${par2 / 60000} min!`,
+    footer: {
+      text: "Some people treat work as a hobby, you say? Goodness me. How very... exceptional."
     }
   };
 
   const WORK_RESUME_MSG = {
     color: "#f00",
     title: "Back to Work",
-    description: `Our ${par2 / 60000} min break has ended... Let's get back to it.`,
-    /*
-    footer: {
-      text: "When, I wonder, did you come under the illusion that your tasks could complete themselves?"
-    } */
+    description: `Our ${par2 / 60000} min break has ended... Let's get back to it.`
   };
 
-  let randomStart = getRandomDifferent(START_IMAGES, lastStartIndex);
-  lastStartIndex = randomStart[0];
-  let startImage = randomStart[1];
   const POMO_START_MSG = {
     color: "#f00",
     title: "Ah... Another Work Day",
     description: `Work duration: ${par1 / 60000} min\nShort break: ${
       par2 / 60000 
-    } min\nLong break: ${par3 / 60000} min`,
-    image: {
-      url: startImage
-    }
+    } min\nLong break: ${par3 / 60000} min`
   };
 
-  let randomEnd = getRandomDifferent(ENDING_IMAGES, lastEndingIndex)
-  lastEndingIndex = randomEnd[0];
-  let endingImage = randomEnd[1];
+
   const POMO_STOP_MSG = {
     color: "#f00",
     title: "Work Hours Are Over~",
-    description: `We've worked for: ${par1} min\nTotal completed work cycles: ${par2}\nHope you were productive^^`,
-    image: {
-      url: endingImage
-    },
+    description: `We've worked for: ${par1} min\nTotal completed work cycles: ${par2}\nHope you were productive^^`
   };
 
   const POM_STATUS_TO_BREAK = {
@@ -245,21 +251,44 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
   };
  
   var msgBase;
+  var thumbnail;
+  var image;
   switch (type) {
     case "stop":
+      var randomEnd = getItem(ENDING_IMAGES, lastEndingIndex)
+      lastEndingIndex = randomEnd[0];
+      image = randomEnd[1];
+      resetAll();
       msgBase = POMO_STOP_MSG;
       break;
     case "start":
+      var randomStart = getItem(START_IMAGES, lastStartIndex);
+      lastStartIndex = randomStart[0];
+      image = randomStart[1];
       msgBase = POMO_START_MSG;
       break;
     case "shortBreak":
+      var randomThumbnail = getItem(BREAK_IMAGES, lastBreakIndex);
+      lastBreakIndex = randomThumbnail[0];
+      thumbnail = randomThumbnail[1];
       msgBase = SHORT_BREAK_MSG;
       break;
     case "longBreak":
+      var randomThumbnail = getItem(BREAK_IMAGES, lastBreakIndex);
+      lastBreakIndex = randomThumbnail[0];
+      thumbnail = randomThumbnail[1];
       msgBase = LONG_BREAK_MSG;
       break;
     case "workResume":
+      var randomThumbnail = getItem(WORK_IMAGES, lastWorkIndex);
+      lastWorkIndex = randomThumbnail[0];
+      thumbnail = randomThumbnail[1];
       msgBase = WORK_RESUME_MSG;
+      if (lastWorkIndex % 2 == 0) {
+        msgBase.footer =  {
+          text: "When, I wonder, did you come under the illusion that your tasks could complete themselves?"
+        };
+      }
       break;
     case "help":
       msgBase = HELP_MSG;
@@ -275,10 +304,15 @@ function createEmbedMsg(type, par1 = null, par2 = null, par3 = null) {
       break;
   }
 
-
-  // add in common thumbnail
-  if (USE_COMMON_THUMBNAIL && !msgBase.thumbnail) {
-    msgBase.thumbnail = COMMON_THUMBNAIL;
+  if (thumbnail) {
+    msgBase.thumbnail = {
+      url: thumbnail
+    };
+  }
+  if (image) {
+    msgBase.image = {
+      url: image
+    }
   }
   return msgBase;
 }
