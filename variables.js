@@ -59,7 +59,7 @@ const COMMON_THUMBNAIL = {
 const USE_COMMON_THUMBNAIL = false;
 const ENDING_IMAGES = ["https://www.dropbox.com/s/y0mi6m26prgv2ha/ayato-asdfghhjk-sir.jpeg?raw=1", "https://www.dropbox.com/s/glqj50dr7py31se/ayato-hottie-schmottie.jpeg?raw=1", "https://www.dropbox.com/s/8cr20cl4w8hjefe/sir-u-r-so-pretty.jpeg?raw=1", "https://www.dropbox.com/s/tjbo426tzkouw66/wife.JPG?raw=1", "https://twitter.com/gifgenshin/status/1506856619811827713?s=12"];
 const BREAK_IMAGES = ["https://www.dropbox.com/s/gt1jr2c7dhlqzxi/ayato-blep.jpg?raw=1", "https://www.dropbox.com/s/x2pzik6bbjimbm6/chibi-yato-yay.png?raw=1", "https://www.dropbox.com/s/x2pzik6bbjimbm6/chibi-yato-yay.png?raw=1", "https://www.dropbox.com/s/vekkxt7bi6zaoro/potato-chibi-yato.jpeg?raw=1"];
-const START_IMAGES = ["https://www.dropbox.com/s/88teobklvhzigly/kamisato-estate.jpg?raw=1", "https://www.dropbox.com/s/3nzr0ttf11boi5s/ezgif-1-7c25bd3cb6.gif?raw=1"];
+const START_IMAGES = ["https://www.dropbox.com/s/88teobklvhzigly/kamisato-estate.jpg?raw=1", "https://www.dropbox.com/s/3nzr0ttf11boi5s/jia-zhu-da-ren-520.gif?raw=1"];
 
 var lastEndingIndex;
 var lastBreakIndex;
