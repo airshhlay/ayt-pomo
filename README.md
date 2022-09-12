@@ -1,4 +1,4 @@
-#genshin impact ayato discord pomodoro bot
+# Genshin Impact Ayato Pomodoro Discord Bot
 
 **Modifying bot stuff**
 - Modify the `variables.js` file to change the bot personality
